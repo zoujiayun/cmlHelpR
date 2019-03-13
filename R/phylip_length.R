@@ -7,7 +7,7 @@
 #' @keywords trim, phylip, clean, seqret
 #' @export
 #' @examples
-#' clean_seqret(infile = "/path/to/phylip.phy, headers = c("sample1", "sample2", "sample3"), file_dir = "/path/to/output_directory")
+#' clean_seqret(infile = "/path/to/phylip.phy", headers = c("sample1", "sample2", "sample3"), file_dir = "/path/to/output_directory")
 clean_seqret <- function (infile, headers, file_dir = NULL) {
 
   ## Getting file basename

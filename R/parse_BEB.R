@@ -6,7 +6,7 @@
 #' @keywords Bayes, empiracle, Bayes, parse
 #' @export
 #' @examples
-#' parse_BEB(dir_path = "path/to/parent_out, out_path = "path/to/output/name.tsv")
+#' parse_BEB(dir_path = "path/to/parent_out", out_path = "path/to/output/name.tsv")
 parse_BEB <- function(dir_path, out_path = NULL) {
 
   ## Importing data
