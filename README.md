@@ -5,5 +5,4 @@ This repository houses accessory functions for the codeml_parallel pipeline I've
 
 ## Necessary updates:
 
-- Addition of `writeMultifasta()` function
-    - Need to ensure the key-value mapping appriach is generalised first
+- General tidying of code
