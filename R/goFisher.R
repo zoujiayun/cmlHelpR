@@ -54,7 +54,8 @@ goFisher <- function(df_clusters, pAdj_method){
     dplyr::group_by(cluster, GO_ID) %>%
     tidyr::nest() %>%
     dplyr::mutate(fisher = purrr::map(data, ~{fisher.test(x = matrix(data = unlist(.x),
-                                                                     nrow = 2),alternative = "two.sided")}),
+                                                                     nrow = 2),
+                                                          alternative = "two.sided")}),
                   pVal = unlist(purrr::map(fisher, ~{.x["p.value"]})),
                   conf_low = unlist(purrr::map(fisher, ~{.x[["conf.int"]][1]})),
                   conf_high = unlist(purrr::map(fisher, ~{.x[["conf.int"]][2]})),
