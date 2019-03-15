@@ -45,9 +45,9 @@ goFisher <- function(df_clusters, pAdj_method){
                   inClust_nGene_outGO, outClust_nGene_outGO)
 
   ## Dropping NA above:
-  ## Genes with NA have been included when getting all values needed to do the fishers test
-  ## But they are removed to tidy the output of the final df + to ensure a fisher's test is not
-  ## conducted on genes with no GO term.
+  ## Genes with no GO term have been used to build the data frame for the analyses.
+  ## However, NA row is just a grouping and does not need to have a fisher's statistic
+  ## calculated.
 
   ## Fishers Exact Test
   df.build.from %>%
