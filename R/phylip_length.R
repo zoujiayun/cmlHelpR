@@ -14,13 +14,13 @@ clean_seqret <- function (infile, headers, file_dir = NULL) {
   chr.basename <- gsub(".+/(.*).phy", "\\1", infile)
 
   ## Reading header
-  dat <- read_lines(file = infile, skip = 1)
+  dat <- readr::read_lines(file = infile, skip = 1)
   dat <- trimws(x = dat, which = "left")
   dat <- paste(dat, collapse = " ")
   dat <- gsub(" ","", dat)
 
   ## Splitting on header information
-  dat <- str_split(string = dat, pattern = paste(headers, collapse = "|"))
+  dat <- stringr::str_split(string = dat, pattern = paste(headers, collapse = "|"))
   dat <- dat[[1]][-1] ## Makes an empty list object at the beginning always
 
   ## Assigning sequences names
@@ -38,7 +38,7 @@ clean_seqret <- function (infile, headers, file_dir = NULL) {
   meta <- paste(length(headers),nchar(dat[[1]]), sep = " ")
 
   ## Adding sample headers to phylip sequences
-  dat <- map2(.x = dat, .y = headers, ~{
+  dat <- purrr::map2(.x = dat, .y = headers, ~{
     paste(.y, .x, sep = "  ")
   })
 
