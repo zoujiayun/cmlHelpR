@@ -30,7 +30,7 @@ clean_seqret <- function (infile, headers, file_dir = NULL) {
   mod <- nchar(dat[[1]]) %% 3
 
   ## Removing n bases from end of string (where n = mod)
-  dat <- map(dat, ~{
+  dat <- purrr::map(dat, ~{
     substr(x = .x, start = 1, stop =  nchar(.x) - mod)
   })
 
