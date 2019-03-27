@@ -10,18 +10,19 @@
 parse_BEB <- function(dir_path, out_path = NULL) {
 
   ## Importing data
-  fl <- list.files(path = dir_path, pattern = "Model2Selection_", full.names = TRUE, recursive = TRUE)
-  fl <- set_names(x = fl, value = basename(str_remove(string = fl, pattern = ".output")))
-  lst.fl <- map(fl, read_lines)
+  fl <- list.files(path = dir_path, pattern = "codeml.output", full.names = TRUE, recursive = TRUE)
+  fl <- fl[stringr::str_detect(string = fl, pattern = "Model2Selection")]
+  names(fl) <- sub(".+//(.*)/codeml.output", "\\1", fl)
+  lst.fl <- purrr::map(fl, readr::read_lines)
 
   ## Iterating through each file extracting Bayes Empirical Bayes values
-  lst.beb <- map(lst.fl, ~{
+  lst.beb <- purrr::map(lst.fl, ~{
 
     int.start <- grep(pattern = "Bayes Empirical Bayes", x = .x)
     int.end <- grep(pattern = "The grid \\(see ternary graph for p0-p1\\)", x = .x)
 
     ## Conditional to get the right output
-    if (isTRUE(.x[(int.start + 2)] == "") | is_empty(.x[(int.start + 2)])) {
+    if (isTRUE(.x[(int.start + 2)] == "") | rlang::is_empty(.x[(int.start + 2)])) {
 
       vec.sub <- c("NA NA NA") ## Entry for samples that don't have any information
 
@@ -34,39 +35,38 @@ parse_BEB <- function(dir_path, out_path = NULL) {
 
   })
 
-  lst.alignLength <- map(lst.fl, ~{
+  lst.alignLength <- purrr::map(lst.fl, ~{
     int.noGapLen <- .x[grep(pattern = "After deleting gaps.", .x)]
     int.noGapLen <- as.numeric(sub(".*\\.\\s+(.*)\\s+sites", "\\1", int.noGapLen))
-    tibble(no_gap_length = int.noGapLen)
-  }) %>%
-    bind_rows(.id = "condition") %>%
-    mutate(condition = gsub("Model2Selection_", "", condition))
+    tibble::tibble(no_gap_length = int.noGapLen)
+  })
+  lst.alignLength <- dplyr::bind_rows(lst.alignLength, .id = "condition")
+  lst.alignLength <- dplyr::mutate(.data = lst.alignLength, condition = gsub("Model2Selection_", "", condition))
 
   ## Removing NULL elements
   lst.beb <- lst.beb[!sapply(lst.beb, is.null)]
 
   ## Converting to long-format dataframe
-  df.beb <- map(lst.beb, ~{
-    .x %>%
-      enframe(name = NULL) %>%
-      separate(col = value, into = c("aa_position", "aa", "val"), sep = " ")
-  }) %>%
-    bind_rows(.id = "condition") %>%
-    mutate(condition = str_remove(string = condition, pattern = "Model2Selection_"),
-           pval = val) %>%
-    mutate(pval = 1 - as.numeric(str_remove_all(string = pval, pattern = "\\*")),
-           signif = str_extract(string = val, pattern = "\\*+"),
-           val = str_remove(val, "\\*+"),
+  df.beb <- purrr::map(lst.beb, ~{
+    tmp <- tibble::enframe(x = .x, name = NULL)
+    tmp <- tidyr::separate(data = tmp, col = value, into = c("aa_position", "aa", "val"), sep = " ")
+  })
+  df.beb <- dplyr::bind_rows(df.beb, .id = "condition")
+  df.beb <- dplyr::mutate(df.beb, condition = stringr::str_remove(string = condition, pattern = "Model2Selection_"),
+           pval = val)
+  df.beb <- dplyr::mutate(df.beb, pval = 1 - as.numeric(stringr::str_remove_all(string = pval, pattern = "\\*")),
+           signif = stringr::str_extract(string = val, pattern = "\\*+"),
+           val = stringr::str_remove(val, "\\*+"),
            val = as.numeric(val),
            aa_position = as.integer(aa_position))
 
-  df.beb <- left_join(df.beb, lst.alignLength) %>%
-    separate(col = condition, into = c("gene", "tree"), sep = "_")
+  df.beb <- dplyr::left_join(df.beb, lst.alignLength)
+  df.beb <- tidyr::separate(df.beb, col = condition, into = c("gene", "tree"), sep = "/")
 
   ## Write outputs
   if (!is.null(out_path)) {
 
-    write_tsv(x = df.beb, path = out_path, col_names = TRUE)
+    readr::write_tsv(x = df.beb, path = out_path, col_names = TRUE)
 
   }
 
