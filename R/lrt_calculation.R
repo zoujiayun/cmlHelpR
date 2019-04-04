@@ -8,7 +8,6 @@
 #' @export
 #' @examples
 #' lrt_statistic(dir_path = "path/to/codeml_out", lst_models = c("Model1Neutral", "Model2Selection"), lst_comparisons = c("Model1Neutral", "Model2Selection"))
-
 lrt_statistic <- function(dir_path, lst_models, lst_comparisons) {
 
   ## Importing all log files
@@ -17,22 +16,22 @@ lrt_statistic <- function(dir_path, lst_models, lst_comparisons) {
   names(vec.logs) <- gsub(".+02_codeML/(.*)/codeml.log", "\\1", vec.logs)
 
   print("Reading file lines")
-  lst.logs <- map(.x = vec.logs, .f = read_lines)
+  lst.logs <- purrr::map(.x = vec.logs, .f = read_lines)
 
   ## Splitting list by models that have been run
   print("Splitting list of files by model")
-  lst.logs.models <- map(lst_models, ~{
+  lst.logs.models <- purrr::map(lst_models, ~{
     lst.logs[grep(.x, names(lst.logs))]
   })
-  lst.logs.models <- set_names(x = lst.logs.models, value = lst_models)
+  lst.logs.models <- magrittr::set_names(x = lst.logs.models, value = lst_models)
 
   ## Subsetting all lines by what is needed
-  df.out <- map(names(lst.logs.models), ~{
+  df.out <- purrr::map(names(lst.logs.models), ~{
 
     if(.x == "Model1Neutral") {
 
       print("Subsetting Model1Neutral")
-      out.m1a <- map(lst.logs.models[[.x]], ~{
+      out.m1a <- purrr::map(lst.logs.models[[.x]], ~{
 
         ## Extracting df
         int.np <- .x[grepl("np =", .x)]
@@ -44,16 +43,16 @@ lrt_statistic <- function(dir_path, lst_models, lst_comparisons) {
         int.lnL <- gsub("lnL\\s+=\\s+", "", int.lnL)
         int.lnL <- as.numeric(int.lnL)
 
-        df.out <- tibble(np = int.np, lnL = int.lnL)
+        df.out <- tibble::tibble(np = int.np, lnL = int.lnL)
         return(df.out)
 
       })
-      bind_rows(out.m1a, .id = "gene_tree")
+      dplyr::bind_rows(out.m1a, .id = "gene_tree")
 
     } else if (.x == "Model2Selection") {
 
       print("Subsetting Model2Selection")
-      out.m2a <- map(lst.logs.models[[.x]], ~{
+      out.m2a <- purrr::map(lst.logs.models[[.x]], ~{
 
         int.np <- .x[grepl("np =", .x)]
         int.np <- gsub("np = \\s+", "", int.np)
@@ -63,44 +62,44 @@ lrt_statistic <- function(dir_path, lst_models, lst_comparisons) {
         int.lnL <- gsub("lnL\\s+=\\s+", "", int.lnL)
         int.lnL <- as.numeric(int.lnL)
 
-        df.out <- tibble(np = int.np, lnL = int.lnL)
+        df.out <- tibble::tibble(np = int.np, lnL = int.lnL)
         return(df.out)
 
       })
-      bind_rows(out.m2a, .id = "gene_tree")
+      dplyr::bind_rows(out.m2a, .id = "gene_tree")
 
     }
 
   })
 
   print("cleaning tree names")
-  df.out <- set_names(x = df.out, value = lst_models)
-  df.out <- bind_rows(df.out, .id = "model")
-  df.out <- mutate(.data = df.out, gene_tree = gsub("/.*_", "_", gene_tree))
+  df.out <- magrittr::set_names(x = df.out, value = lst_models)
+  df.out <- dplyr::bind_rows(df.out, .id = "model")
+  df.out <- dplyr::mutate(.data = df.out, gene_tree = gsub("/.*_", "_", gene_tree))
 
   ## Long to wide format on multiple variables
   print("Long to wide format")
   df.out <- data.table::dcast(data.table::setDT(df.out), gene_tree ~ model, value.var = c("np", "lnL"))
-  df.out <- as_tibble(x = df.out)
-  df.out <- separate(data = df.out,
+  df.out <- tibble::as_tibble(x = df.out)
+  df.out <- tidyr::separate(data = df.out,
                      col = gene_tree,
                      into = c("gene","tree"),
                      sep = "_")
 
   ## Model comparisons
   print("Generating list comparisons")
-  lst.comparisons <- map(lst_comparisons, ~{
+  lst.comparisons <- purrr::map(lst_comparisons, ~{
 
-    tmp.out <- select(.data = df.out, gene, tree, matches(paste(.x, collapse = "|")))
-    tmp.out <- mutate(.data = tmp.out,
+    tmp.out <- dplyr::select(.data = df.out, gene, tree, dplyr::matches(paste(.x, collapse = "|")))
+    tmp.out <- dplyr::mutate(.data = tmp.out,
                   delta = (2*(abs(tmp.out[[5]] - tmp.out[[6]]))),
-                  df = 2, #abs(tmp.out[[3]] - tmp.out[[4]]),
+                  df = 2, #abs(tmp.out[[3]] - tmp.out[[4]]), ## Can just hard code this cause always two comparisons
                   pval = pchisq(delta, df, lower.tail=FALSE))
 
   })
 
   ## Assigning names to list object
-  names(lst.comparisons) <- map(lst_comparisons, ~{paste(.x, collapse = "_")})
+  names(lst.comparisons) <- purrr::map(lst_comparisons, ~{paste(.x, collapse = "_")})
   return(lst.comparisons)
 
 }
