@@ -75,7 +75,8 @@ lrt_statistic <- function(dir_path, lst_models, lst_comparisons) {
   print("cleaning tree names")
   df.out <- magrittr::set_names(x = df.out, value = lst_models)
   df.out <- dplyr::bind_rows(df.out, .id = "model")
-  df.out <- dplyr::mutate(.data = df.out, gene_tree = gsub("/.*_", "_", gene_tree))
+  # df.out <- dplyr::mutate(.data = df.out, gene_tree = gsub("/.*_", "_", gene_tree))
+  df.out <- dplyr::mutate(.data = df.out, gene_tree = gsub(".+/(.*)-.+-.+/Model.+_(.*)/codeml.log", "\\1_\\2", gene_tree))
 
   ## Long to wide format on multiple variables
   print("Long to wide format")
@@ -93,7 +94,7 @@ lrt_statistic <- function(dir_path, lst_models, lst_comparisons) {
     tmp.out <- dplyr::select(.data = df.out, gene, tree, dplyr::matches(paste(.x, collapse = "|")))
     tmp.out <- dplyr::mutate(.data = tmp.out,
                   delta = (2*(abs(tmp.out[[5]] - tmp.out[[6]]))),
-                  df = 2, #abs(tmp.out[[3]] - tmp.out[[4]]), ## Can just hard code this cause always two comparisons
+                  df = 2, #abs(tmp.out[[3]] - tmp.out[[4]]), ## Hard-coded as was told this is always the value...?
                   pval = pchisq(delta, df, lower.tail=FALSE))
 
   })
