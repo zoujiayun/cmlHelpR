@@ -16,7 +16,7 @@ lrt_statistic <- function(dir_path, lst_models, lst_comparisons) {
   names(vec.logs) <- gsub(".+02_codeML/(.*)/codeml.log", "\\1", vec.logs)
 
   print("Reading file lines")
-  lst.logs <- purrr::map(.x = vec.logs, .f = read_lines)
+  lst.logs <- purrr::map(.x = vec.logs, .f = readr::read_lines)
 
   ## Splitting list by models that have been run
   print("Splitting list of files by model")
