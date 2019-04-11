@@ -11,9 +11,9 @@
 lrt_statistic <- function(dir_path, lst_models, lst_comparisons) {
 
   ## Importing all log files
-  print("Gettting list of files")
+  print("Getting list of files")
   vec.logs <- list.files(path = dir_path, pattern = ".log", full.names = TRUE, recursive = TRUE)
-  names(vec.logs) <- gsub(".+02_codeML/(.*)/codeml.log", "\\1", vec.logs)
+  names(vec.logs) <- gsub(".+/(.*)/(.*)/codeml.log", "\\1::\\2", vec.logs)
 
   print("Reading file lines")
   lst.logs <- purrr::map(.x = vec.logs, .f = readr::read_lines)
