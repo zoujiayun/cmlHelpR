@@ -29,7 +29,6 @@ lrt_statistic <- function(dir_path, lst_models, lst_comparisons) {
   df.out <- purrr::map(lst.logs.models, .parse_np_lnL)
 
   print("cleaning tree names")
-  df.out <- magrittr::set_names(x = df.out, value = lst_models)
   df.out <- dplyr::bind_rows(df.out, .id = "model")
   df.out <- dplyr::mutate(.data = df.out, gene_tree = gsub("(.*)-.+-.+_(.*)", "\\1_\\2", gene_tree))
 
@@ -38,15 +37,14 @@ lrt_statistic <- function(dir_path, lst_models, lst_comparisons) {
   df.out <- data.table::dcast(data.table::setDT(df.out), gene_tree ~ model, value.var = c("np", "lnL"))
   df.out <- tibble::as_tibble(x = df.out)
   df.out <- tidyr::separate(data = df.out,
-                     col = gene_tree,
-                     into = c("gene","tree"),
-                     sep = "_")
+                            col = gene_tree,
+                            into = c("gene","tree"),
+                            sep = "_")
 
   ## Model comparisons
   print("Generating list comparisons")
   lst.comparisons <- purrr::map(lst_comparisons, ~{
-
-    tmp.out <- dplyr::select(.data = df.out, gene, tree, dplyr::matches(paste(.x, collapse = "|")))
+    tmp.out <- dplyr::select(.data = df.out, gene, tree, dplyr::matches(paste(.x, "$", collapse = "|", sep = "")))
     tmp.out <- dplyr::mutate(.data = tmp.out,
                   delta = (2*(abs(tmp.out[[6]] - tmp.out[[5]]))),
                   df = abs(tmp.out[[4]] - tmp.out[[3]]),
