@@ -7,7 +7,7 @@
 #' @keywords Likelihood ratio test, LRT
 #' @export
 #' @examples
-#' lrt_statistic(dir_path = "path/to/codeml_out", models = c("Model1Neutral", "Model2Selection"), lst_comparisons = c("Model1Neutral", "Model2Selection"))
+#' lrt_statistic(dir_path = "path/to/codeml_out", models = c("M1a", "M2a"), lst_comparisons = c("M1a", "M2a"))
 lrt_statistic <- function(dir_path, models, lst_comparisons) {
 
   ## Importing all log files
