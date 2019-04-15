@@ -6,18 +6,12 @@
 .parse_np_lnL <- function(vec.list){
 
   lst <- purrr::map(vec.list, ~{
-    ## Number of processes
-    int.np <- .x[grepl("^np\\s+=", .x)]
-    int.np <- gsub("np =\\s+", "", int.np)
-    int.np <- as.numeric(x = int.np)
 
-    ## log-likelihood
-    int.lnL <- .x[grepl("^lnL  =", .x)]
-    int.lnL <- gsub("lnL +=\\s+", "", int.lnL)
-    int.lnL <- as.numeric(int.lnL)
-
-    df.out <- tibble::tibble(np = int.np, lnL = int.lnL)
-    return(df.out)
+    r <- .x[grep(pattern = "^lnL\\(", x = .x)]
+    np <- as.numeric(trimws(sub("lnL\\(ntime:.+np:(.*)\\).+", "\\1", r)))
+    lnL <- as.numeric(trimws(sub(".*\\):(.*)\\s+.+$", "\\1", r)))
+    out <- tibble::tibble(np = np, lnL = lnL)
+    return(out)
   })
 
   dplyr::bind_rows(lst, .id = "gene_tree")

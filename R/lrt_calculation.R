@@ -2,49 +2,44 @@
 #'
 #' General run down of what it does
 #' @param dir_path Path to codeml_parallel output directory.
-#' @param lst_models A list of models to use in the LRT calculations
+#' @param models A list of models to use in the LRT calculations
 #' @param lst_comparisons Combinations/comparisons of the above models
 #' @keywords Likelihood ratio test, LRT
 #' @export
 #' @examples
-#' lrt_statistic(dir_path = "path/to/codeml_out", lst_models = c("Model1Neutral", "Model2Selection"), lst_comparisons = c("Model1Neutral", "Model2Selection"))
-lrt_statistic <- function(dir_path, lst_models, lst_comparisons) {
+#' lrt_statistic(dir_path = "path/to/codeml_out", models = c("Model1Neutral", "Model2Selection"), lst_comparisons = c("Model1Neutral", "Model2Selection"))
+lrt_statistic <- function(dir_path, models, lst_comparisons) {
 
   ## Importing all log files
-  print("Getting list of files")
-  vec.logs <- list.files(path = dir_path, pattern = ".log", full.names = TRUE, recursive = TRUE)
-  names(vec.logs) <- gsub(".+/(.*)/(.*)/codeml.log", "\\1::\\2", vec.logs)
+  dirs <- list.dirs(path = dir_path, full.names = TRUE)[stringr::str_detect(string = list.dirs(path = dir_path, full.names = TRUE), pattern = paste(models, collapse = "|"))]
+  dirs <- magrittr::set_names(x = dirs, value = models)
 
-  print("Reading file lines")
-  lst.logs <- purrr::map(.x = vec.logs, .f = readr::read_lines)
+  files <- purrr::map(dirs, ~{
+    fl <- list.files(path = .x, pattern = ".output", full.names = TRUE, recursive = TRUE)
+    fl <- magrittr::set_names(x = fl, value = sub(".output", "", basename(fl)))
+    lapply(fl, readr::read_lines)
 
-  ## Splitting list by models that have been run
-  print("Splitting list of files by model")
-  lst.logs.models <- purrr::map(lst_models, ~{
-    lst.logs[grep(paste0(.x, "_[a-zA-Z]+$"), names(lst.logs))]
   })
-  lst.logs.models <- magrittr::set_names(x = lst.logs.models, value = lst_models)
 
-  ## Getting np and lnL values from output files
-  df.out <- purrr::map(lst.logs.models, .parse_np_lnL)
+  ## Extracting np + lnL values
+  np_lnL <- purrr::map(files, .parse_np_lnL)
 
-  print("cleaning tree names")
-  df.out <- dplyr::bind_rows(df.out, .id = "model")
-  df.out <- dplyr::mutate(.data = df.out, gene_tree = gsub("(.*)-.+-.+_(.*)", "\\1_\\2", gene_tree))
+  ## print("cleaning tree names")
+  np_lnL <- dplyr::bind_rows(np_lnL, .id = "model")
 
   ## Long to wide format on multiple variables
-  print("Long to wide format")
-  df.out <- data.table::dcast(data.table::setDT(df.out), gene_tree ~ model, value.var = c("np", "lnL"))
-  df.out <- tibble::as_tibble(x = df.out)
-  df.out <- tidyr::separate(data = df.out,
+  # print("Long to wide format")
+  np_lnL <- data.table::dcast(data.table::setDT(np_lnL), gene_tree ~ model, value.var = c("np", "lnL"))
+  np_lnL <- tibble::as_tibble(x = np_lnL)
+  np_lnL <- tidyr::separate(data = np_lnL,
                             col = gene_tree,
                             into = c("gene","tree"),
-                            sep = "_")
+                            sep = "::")
 
   ## Model comparisons
-  print("Generating list comparisons")
+  # print("Generating list comparisons")
   lst.comparisons <- purrr::map(lst_comparisons, ~{
-    tmp.out <- dplyr::select(.data = df.out, gene, tree, dplyr::matches(paste(.x, "$", collapse = "|", sep = "")))
+    tmp.out <- dplyr::select(.data = np_lnL, gene, tree, dplyr::matches(paste(.x, "$", collapse = "|", sep = "")))
     tmp.out <- dplyr::mutate(.data = tmp.out,
                   delta = (2*(abs(tmp.out[[6]] - tmp.out[[5]]))),
                   df = abs(tmp.out[[4]] - tmp.out[[3]]),
