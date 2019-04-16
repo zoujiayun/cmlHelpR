@@ -40,9 +40,9 @@ lrt_statistic <- function(dir_path, models, lst_comparisons) {
   lst.comparisons <- purrr::map(lst_comparisons, ~{
     tmp.out <- dplyr::select(.data = np_lnL, gene, tree, dplyr::matches(paste(.x, "$", collapse = "|", sep = "")))
     tmp.out <- dplyr::mutate(.data = tmp.out,
-                  delta = (2*(abs(tmp.out[[6]] - tmp.out[[5]]))),
-                  df = abs(tmp.out[[4]] - tmp.out[[3]]),
-                  pval = pchisq(delta, df, lower.tail=FALSE))
+                             delta = (2*(abs(tmp.out[[6]] - tmp.out[[5]]))),
+                             df = abs(tmp.out[[4]] - tmp.out[[3]]),
+                             pval = pchisq(delta, df, lower.tail=FALSE))
 
   })
 
