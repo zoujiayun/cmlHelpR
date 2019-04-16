@@ -11,24 +11,23 @@
 lrt_statistic <- function(dir_path, models, lst_comparisons) {
 
   ## Importing all log files
-  dirs <- list.dirs(path = dir_path, full.names = TRUE)[stringr::str_detect(string = list.dirs(path = dir_path, full.names = TRUE), pattern = paste(models, collapse = "|"))]
+  dirs <- list.dirs(path = dir_path, full.names = TRUE)[stringr::str_detect(string = list.dirs(path = dir_path, full.names = TRUE), pattern = paste(models, "$", sep = "", collapse = "|"))]
   dirs <- magrittr::set_names(x = dirs, value = models)
 
+  print("Reading output files")
   files <- purrr::map(dirs, ~{
     fl <- list.files(path = .x, pattern = ".output", full.names = TRUE, recursive = TRUE)
     fl <- magrittr::set_names(x = fl, value = sub(".output", "", basename(fl)))
     lapply(fl, readr::read_lines)
-
   })
 
   ## Extracting np + lnL values
+  print("Extracting np + lnL")
   np_lnL <- purrr::map(files, .parse_np_lnL)
-
-  ## print("cleaning tree names")
   np_lnL <- dplyr::bind_rows(np_lnL, .id = "model")
 
   ## Long to wide format on multiple variables
-  # print("Long to wide format")
+  print("Long to wide format")
   np_lnL <- data.table::dcast(data.table::setDT(np_lnL), gene_tree ~ model, value.var = c("np", "lnL"))
   np_lnL <- tibble::as_tibble(x = np_lnL)
   np_lnL <- tidyr::separate(data = np_lnL,
@@ -37,7 +36,7 @@ lrt_statistic <- function(dir_path, models, lst_comparisons) {
                             sep = "::")
 
   ## Model comparisons
-  # print("Generating list comparisons")
+  print("Generating list comparisons")
   lst.comparisons <- purrr::map(lst_comparisons, ~{
     tmp.out <- dplyr::select(.data = np_lnL, gene, tree, dplyr::matches(paste(.x, "$", collapse = "|", sep = "")))
     tmp.out <- dplyr::mutate(.data = tmp.out,
