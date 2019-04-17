@@ -39,5 +39,3 @@ internal_stops <- function(dir_path, tree_string, nSites = NULL) {
   }
 
 }
-
-t <- internal_stops(dir_path = "~/Documents/projects/Kate_general/analyses/1901_RBH/04_codeml/M2a", tree_string = "brownForeground", nSites = 1)
