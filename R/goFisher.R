@@ -7,28 +7,37 @@
 #' @export
 #' @examples
 #' goFisher(df_clusters = df.clusters.goTerms, pAdj_method = "bonferroni")
-goFisher <- function(df_clusters, pAdj_method){
+goFisher <- function(gene_GOID_mapping, gene_cluster_mapping, pAdj_method){
 
-  ## Total number of genes in analysis
-  nGenes_total <- df_clusters %>%
+  ## Total number of genes assessed (excluding those with internal stop codons)
+  nGenes_total <- gene_GOID_mapping %>%
     dplyr::pull(gene) %>%
     unique() %>%
     length()
 
-  ## Frequency counts of GO terms
-  nGO_total <- df_clusters %>%
+  ## Total frequency of GO terms
+  nGO_total <- gene_GOID_mapping %>%
     dplyr::group_by(GO_ID) %>%
     dplyr::summarise(nGO_total = n())
 
-  ## Number of unique genes per cluster
-  df.nGenes.cluster <- df_clusters %>%
+  ## Number of unique genes in each CONDITION
+  df.nGenes.cluster <- gene_cluster_mapping %>%
     dplyr::group_by(cluster) %>%
-    dplyr::summarise(nGene_cluster = length(unique(gene)))
+    dplyr::tally(name = "nGene_cluster")
 
-  ## Number of genes with each GOterms per cluster
-  df.cluster.go <- df_clusters %>%
-    dplyr::group_by(cluster, GO_ID) %>%
-    dplyr::summarise(inClust_nGene_inGO = n())
+  ## Frequency of GO term WITHIN CONDITION
+  df.cluster.go <- gene_cluster_mapping %>%
+    dplyr::group_by(cluster) %>%
+    tidyr::nest(.key = "genes_in_condition") %>%
+    mutate(genes_cluster_GOID = purrr::map(genes_in_condition, ~{
+      dplyr::left_join(.x, go_mapped) %>%
+        dplyr::group_by(GO_ID) %>%
+        dplyr::tally(name = "inClust_nGene_inGO")
+    }))
+
+  df.cluster.go <- df.cluster.go$genes_cluster_GOID %>%
+    magrittr::set_names(df.cluster.go$cluster) %>%
+    dplyr::bind_rows(.id = "cluster")
 
   ## Joining all information together
   df.build.from <- df.nGenes.cluster %>%
@@ -37,8 +46,7 @@ goFisher <- function(df_clusters, pAdj_method){
     dplyr::mutate(nGene_remain = nGenes_total - nGene_cluster,
                   outClust_nGene_inGO = nGO_total - inClust_nGene_inGO,
                   inClust_nGene_outGO = nGene_cluster - inClust_nGene_inGO,
-                  outClust_nGene_outGO = nGene_remain - outClust_nGene_inGO,
-                  GO_ID = dplyr::na_if(x = GO_ID, "")) %>%
+                  outClust_nGene_outGO = nGene_remain - outClust_nGene_inGO) %>%
     tidyr::drop_na() %>%
     dplyr::select(cluster, GO_ID, -nGene_cluster,
                   inClust_nGene_inGO, outClust_nGene_inGO,
@@ -46,8 +54,9 @@ goFisher <- function(df_clusters, pAdj_method){
 
   ## Dropping NA above:
   ## Genes with no GO term have been used to build the data frame for the analyses.
+  ## They need to be included as they are still part of the dataset, they just don't have a GO annotation.
   ## However, NA row is just a grouping and does not need to have a fisher's statistic
-  ## calculated.
+  ## calculated. It is not of interest to find out if NA is significant.
 
   ## Fishers Exact Test
   df.build.from %>%
