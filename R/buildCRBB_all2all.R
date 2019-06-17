@@ -64,7 +64,7 @@ get_ortholog_headers <- function(crbb_path, crbb_ext, sample_separator, id_pct, 
 
   ## Matching between the different comparisons
   orth_df <- purrr::reduce(.x = bestHits_list, dplyr::left_join) ## Reduce command applies left join to all dataframes in the list
-  orth_df <- tidyr::drop_na(data = orth_df)                        ## Removing rows where information isn't present for ALL snakes
+  orth_df <- tidyr::drop_na(data = orth_df)                        ## Removing rows where information isn't present for ALL samples
   orth_df <- tidyr::unite(data = orth_df,                          ## Uniting gene symbol columns to generate file name column
                         col = "file_name",
                         dplyr::starts_with(match = "gene_"), sep = "-")
