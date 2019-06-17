@@ -52,5 +52,3 @@ write_fasta <- function(orthologs, fasta_dir, fasta_ext, out_dir){
   return(out)
 
 }
-
-
