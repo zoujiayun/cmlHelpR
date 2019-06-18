@@ -9,46 +9,83 @@
 #' @export
 #' @examples
 #' write_fasta(orthologs = listObj, fasta_dir = "path/to/fasta/directory", fasta_ext = ".fasta", out_dir = "path/to/output/dir")
-write_fasta <- function(orthologs, fasta_dir, fasta_ext, out_dir){
+write_fasta <- function(orthologs, fasta_dir, pep_ext, nuc_ext, pep_out, nuc_out){
 
-  dir.create(path = out_dir, recursive = TRUE)
+  ## Create output directories
+  dir.create(path = pep_out, recursive = TRUE)
+  dir.create(path = nuc_out, recursive = TRUE)
 
-  ## Import fasta files
-  fastas <- list.files(path = fasta_dir, pattern = fasta_ext, full.names = TRUE)
-  fastas <- magrittr::set_names(x = fastas, stringr::str_remove(string = basename(fastas), pattern = fasta_ext))
-  fastas <- purrr::map(.x = fastas, .f = Biostrings::readAAStringSet, format = "fasta")
+  ## Import peptide files
+  pep_seq <- list.files(path = fasta_dir, pattern = pep_ext, full.names = TRUE)
+  pep_seq <- magrittr::set_names(x = pep_seq, stringr::str_remove(string = basename(pep_seq), pattern = pep_ext))
+  pep_seq <- purrr::map(.x = pep_seq, .f = Biostrings::readAAStringSet, format = "fasta")
+
+  ## Importing nucleotide files
+  nuc_seq <- list.files(path = fasta_dir, pattern = nuc_ext, full.names = TRUE)
+  nuc_seq <- magrittr::set_names(x = nuc_seq, stringr::str_remove(string = basename(nuc_seq), pattern = nuc_ext))
+  nuc_seq <- purrr::map(.x = nuc_seq, .f = Biostrings::readAAStringSet, format = "fasta")
 
   ## Iterate through table and write mutli-fasta files
-  df <- orthologs[[2]]
+  genes_long <- orthologs[[2]]
 
-  out <- purrr::pmap(.l = df, .f = function(file_name, data){
+  ##
+  out <- purrr::pmap(.l = genes_long, .f = function(file_name, data){
 
-    ## Output file preparation
-    print(paste0(out_dir, "/", file_name, ".fasta"))
-    if(file.exists(paste0(out_dir, "/", file_name, ".fasta"))) file.remove(paste0(out_dir, "/", file_name, ".fasta"))
-    file.create(paste0(out_dir, "/", file_name, ".fasta"))
-
-    ## Iterate over data-frame lists for genes
-    tmp <- purrr::pmap(.l = data, .f = function(sample, header) {
-
-      ## Extract sequence
-      s <- fastas[[sample]][header] ## Single brackets to retain sequence name field
-      names(s) <- sample
-
-      ## Writing to file
-      Biostrings::writeXStringSet(x = s, filepath = paste0(out_dir, "/", file_name, ".fasta"), append = TRUE)
-      s ## Returning object
-
+    pep_temp <- purrr::pmap(.l = data, .f = function(sample, header) {
+      ## Extract sequence - pep_seq
+      p <- pep_seq[[sample]][header] ## Single brackets to retain sequence name field
+      names(p) <- sample
+      return(p)
     })
 
     ## Assigning names and returning biostrings set
-    tmp <- set_names(x = tmp, nm = data[["file_name"]])
-    tmp <- Biostrings::AAStringSetList(tmp)@unlistData
+    pep_temp <- set_names(x = pep_temp, nm = data[["file_name"]])
+    pep_temp <- Biostrings::AAStringSetList(pep_temp)@unlistData
+
+    ## Any stop codons?
+    stop_df <- tibble::as_tibble(Biostrings::vmatchPattern(pattern = ".", subject = pep_temp))
+    stop_df <- dim(stop_df)[[1]]
+
+    ## If no internal stop codons
+    if(stop_df == 0){
+
+      nuc_temp <- purrr::pmap(.l = data, .f = function(sample, header) {
+        ## Extracting sequence - nuc_seq
+        n <- nuc_seq[[sample]][header]
+        names(n) <- sample
+        return(n)
+      })
+
+      ## Assigning names and returning biostrings set
+      nuc_temp <- set_names(x = nuc_temp, nm = data[["file_name"]])
+      nuc_temp <- Biostrings::AAStringSetList(nuc_temp)@unlistData
+
+      ## Check if file already exists - delete if it does
+      if(file.exists(paste0(pep_out, "/", file_name, ".fasta"))) file.remove(paste0(pep_out, "/", file_name, ".fasta"))
+      if(file.exists(paste0(nuc_out, "/", file_name, ".fasta"))) file.remove(paste0(nuc_out, "/", file_name, ".fasta"))
+
+      ## Create file
+      file.create(paste0(pep_out, "/", file_name, ".fasta"))
+      file.create(paste0(nuc_out, "/", file_name, ".fasta"))
+
+      ## Write file
+      Biostrings::writeXStringSet(x = pep_temp, filepath = paste0(pep_out, "/", file_name, ".fasta"), append = TRUE)
+      Biostrings::writeXStringSet(x = nuc_temp, filepath = paste0(nuc_out, "/", file_name, ".fasta"), append = TRUE)
+
+      ## Preparing return object
+      list(peptide = pep_temp, nucleotide = nuc_temp, internalStop = FALSE)
+
+    } else {
+
+      list(peptide = pep_temp, internalStop = TRUE)
+
+    }
+
 
   })
 
   ## Naming output list
-  names(out) <- df[["file_name"]]
+  names(out) <- genes_long[["file_name"]]
   return(out)
 
 }
