@@ -64,7 +64,7 @@ parse_BEB <- function(dir_path, models, out_path = NULL, cores = 1) {
   })
 
   alnLength <- dplyr::bind_rows(alnLength, .id = "condition")
-  alnLength <- tidyr::separate(data = alnLength, col = condition, into = c("gene", "tree"), sep = "::")
+  alnLength <- tidyr::separate(data = alnLength, col = condition, into = c("gene", "tree"), sep = "_")
 
 
   beb <- dplyr::left_join(beb, alnLength)
