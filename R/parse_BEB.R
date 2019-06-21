@@ -51,7 +51,7 @@ parse_BEB <- function(dir_path, models, out_path = NULL, cores = 1) {
   beb <- magrittr::set_names(x = beb, value = names(files))
   beb <- dplyr::bind_rows(beb, .id = "model")
 
-  # print("Getting no-gap-length value")
+  print("Getting no-gap-length value")
   alnLength <- purrr::map(files[[1]], ~{
 
     r <- head(x = .x, n = 3)
@@ -66,7 +66,6 @@ parse_BEB <- function(dir_path, models, out_path = NULL, cores = 1) {
   alnLength <- dplyr::bind_rows(alnLength, .id = "condition")
   alnLength <- tidyr::separate(data = alnLength, col = condition, into = c("gene", "tree"), sep = "_")
 
-
   beb <- dplyr::left_join(beb, alnLength)
 
   ## Write outputs
@@ -75,3 +74,5 @@ parse_BEB <- function(dir_path, models, out_path = NULL, cores = 1) {
   }
   return(beb)
 }
+
+t <- parse_BEB(dir_path = "~/Documents/projects/Kate_general/analyses/1906_dNdS/04_codeml", models = c("ModelA"), cores = 6)
