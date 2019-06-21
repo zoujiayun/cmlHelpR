@@ -25,9 +25,9 @@ parse_BEB <- function(dir_path, models, out_path = NULL, cores = 1) {
   ## Importing data
   print("Reading output files")
   files <- purrr::map(dirs, ~{
-    fl <- list.files(path = .x, pattern = ".output", full.names = TRUE)
-    fl <- magrittr::set_names(x = fl, value = sub(".output", "", basename(fl)))
-    lapply(fl, readr::read_lines)
+    fl <- list.files(path = .x, pattern = ".out", full.names = TRUE)
+    fl <- magrittr::set_names(x = fl, value = sub(".out", "", basename(fl)))
+    purrr::map(fl, readr::read_lines)
   })
 
   ## Parsing BEB from models
@@ -51,13 +51,15 @@ parse_BEB <- function(dir_path, models, out_path = NULL, cores = 1) {
   beb <- magrittr::set_names(x = beb, value = names(files))
   beb <- dplyr::bind_rows(beb, .id = "model")
 
-  print("Getting no-gap-length value")
+  # print("Getting no-gap-length value")
   alnLength <- purrr::map(files[[1]], ~{
 
-    int.noGapLen <- .x[grep(pattern = "After deleting gaps.", .x)]
-    int.noGapLen <- as.numeric(sub(".*\\.\\s+(.*)\\s+sites", "\\1", int.noGapLen))
-    tibble::tibble(no_gap_length = int.noGapLen)
-
+    r <- head(x = .x, n = 3)
+    r <- trimws(x = r)
+    r <- r[stringr::str_detect(string = r, pattern = "^3")]
+    r <- stringr::str_split(string = r, pattern = "\\s+")
+    r <- unlist(x = r)
+    tibble::tibble(no_gap_length = as.numeric(r[[2]]))
 
   })
 
