@@ -74,5 +74,3 @@ parse_BEB <- function(dir_path, models, out_path = NULL, cores = 1) {
   }
   return(beb)
 }
-
-t <- parse_BEB(dir_path = "~/Documents/projects/Kate_general/analyses/1906_dNdS/04_codeml", models = c("ModelA"), cores = 6)
