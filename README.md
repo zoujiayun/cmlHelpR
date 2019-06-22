@@ -1,8 +1,17 @@
 # cmlHelpR
 
-This repository houses accessory functions for the codeml_parallel pipeline I've put together. These are a series of R packages that conduct a range of functions like parsing information from `codeml` output to conducting LRT statistics between models.
+This package and repository is a simple way for me to collect functions I've written to analyses `CODEML` output. 
 
+The functions are continually being tweaked, and in many instances serve a specific purpose for what I am trying to do. Nevertheless, I've endeavoured to make the functions as extensible as possible.
 
-## Necessary updates:
+In the sections below I'll demonstrate some use cases of the major functions of interest.
 
-- General tidying of code
+## Developmenet
+
+- TBD
+
+## Tutorial
+
+## Author 
+
+- **Alastair Ludington**: alastair.ludington@adelaide.edu.au
