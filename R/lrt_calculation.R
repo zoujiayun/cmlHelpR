@@ -16,8 +16,8 @@ lrt_statistic <- function(dir_path, models, lst_comparisons) {
 
   print("Reading output files")
   files <- purrr::map(dirs, ~{
-    fl <- list.files(path = .x, pattern = ".output", full.names = TRUE, recursive = TRUE)
-    fl <- magrittr::set_names(x = fl, value = sub(".output", "", basename(fl)))
+    fl <- list.files(path = .x, pattern = ".out", full.names = TRUE, recursive = TRUE)
+    fl <- magrittr::set_names(x = fl, value = sub(".out", "", basename(fl)))
     lapply(fl, readr::read_lines)
   })
 
@@ -33,7 +33,7 @@ lrt_statistic <- function(dir_path, models, lst_comparisons) {
   np_lnL <- tidyr::separate(data = np_lnL,
                             col = gene_tree,
                             into = c("gene","tree"),
-                            sep = "::")
+                            sep = "_")
 
   ## Model comparisons
   print("Generating list comparisons")
