@@ -35,7 +35,7 @@
                      pval = 1 - val,
                      aa = dplyr::na_if(x = aa, "NA"))
   df <- dplyr::mutate_at(.tbl = df, .vars = c("pos", "postMean", "SE"), .funs = as.numeric)
-  df <- tidyr::separate(data = df, col = id, into = c("gene", "tree"), sep = "::")
+  df <- tidyr::separate(data = df, col = id, into = c("gene", "tree"), sep = "_")
   df <- select(.data = df, gene, tree, pos, aa, val, pval, signif, postMean, SE)
 
   return(df)
