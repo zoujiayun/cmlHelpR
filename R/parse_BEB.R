@@ -7,7 +7,7 @@
 #' @export
 #' @examples
 #' parse_BEB(dir_path = "path/to/parent_out", models = c("M2a", "M8", "ModelA"), out_path = "path/to/output/name.tsv", cores = 4)
-parse_BEB <- function(dir_path, models, out_path = NULL, cores = 1) {
+parseBEB <- function(dir_path, models, out_path = NULL, cores = 1) {
 
   m <- c("M2a", "M8", "ModelA")
 

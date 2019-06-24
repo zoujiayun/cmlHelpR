@@ -9,7 +9,7 @@
 #' @examples
 #' BEBDF2Freq(df_beb = df.beb, only_signif = TRUE, max_freq = 100)
 
-BEBDF2Freq <- function(df_beb, only_signif = NULL, max_freq = NULL) {
+beb2freq <- function(df_beb, only_signif = NULL, max_freq = NULL) {
 
   ## Split on tree
   lst.byTree <- split(df_beb, df_beb$tree)

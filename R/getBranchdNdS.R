@@ -7,7 +7,7 @@
 #' @export
 #' @examples
 #' getBranchdNdS(file_list = list.files(path = "path/to/files"))
-getBranchdNdS <- function(file_list) {
+getBranchDNDS <- function(file_list) {
 
   ## Accepted models
   g <- c("FreeRatio" ,"M0" ,"M1a" ,"M2a_Rel" ,"M3" ,"M7" ,"M8" , "TwoRatio")
