@@ -14,18 +14,18 @@ getBranchdNdS <- function(file_list) {
   g <- paste0("/", g, "/", collapse = "|")
 
   ## Filter out models not in g
-  f <- file_list[str_detect(string = file_list, pattern = g)]
-  f <- set_names(x = f, value = str_remove(string = sub(".*/(.*)/(.*)$", "\\1_\\2", f), pattern = ".out"))
-  f <- map(f, read_lines)
+  f <- file_list[stringr::str_detect(string = file_list, pattern = g)]
+  f <- magrittr::set_names(x = f, value = stringr::str_remove(string = sub(".*/(.*)/(.*)$", "\\1_\\2", f), pattern = ".out"))
+  f <- purrr::map(f, read_lines)
 
   ## Iterate through each file and get values
-  d <- map(f, ~{
+  d <- purrr::map(f, ~{
     p1 <- grep(pattern = "^ branch", x = .x)
     p2 <- grep(pattern = "^Naive\ Empirical\ Bayes\ \\(NEB\\)\ analysis", .x) - 1
     v <- trimws(x = .x[p1:p2], which = "left")
     v <- v[v != ""]
-    v <- str_replace_all(string = v, pattern = "\\s+", replacement = "\t")
-    read_tsv(v)
+    v <- stringr::str_replace_all(string = v, pattern = "\\s+", replacement = "\t")
+    readr::read_tsv(v)
   })
 
   ## Build dataframe - nested
