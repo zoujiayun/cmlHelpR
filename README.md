@@ -16,6 +16,22 @@ In the `R-studio` console, execute the following code.
 
 ## Tutorial
 
+**get_ortholog_headers()**
+
+**write_fasta()**
+
+**lrt_statistics()**
+
+**parse_BEB()**
+
+**BEBDF2Freq()**
+
+**getBranchdNdS()**
+
+**getPW()**
+
+**goFisher()**
+
 ## Author 
 
 - **Alastair Ludington**: alastair.ludington@adelaide.edu.au
