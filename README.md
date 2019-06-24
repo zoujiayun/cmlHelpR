@@ -30,7 +30,8 @@ That is to say, the same sequences in each of the species hits the equivalent se
 
 **Usage**:
 ```
-out <- cmlHelpR::getOrthologueHeaders(crbb_path = "path/to/crbb/out", 
+library(cmlHelpR)
+out <- getOrthologueHeaders(crbb_path = "path/to/crbb/out", 
                                       crbb_ext = ".tsv", 
                                       sample_separator = "_", 
                                       id_pct = 95, 
@@ -38,6 +39,10 @@ out <- cmlHelpR::getOrthologueHeaders(crbb_path = "path/to/crbb/out",
 ```
 
 **Output**:
+
+The output is a list object that stores a wide format dataframe and a nested dataframe.
+
+The wide format dataframe is a good example what the explanation above. The first column is the gene symbols parsed from the end of each samples header line (see `parallel_codeml` README for building file this way). Columns 2-4 are the actual headers from each samples respective fasta file which will be used to parse the sequences in later steps.
 
 ```
 $wide_format
@@ -74,10 +79,48 @@ $nested_format
 
 ```
 
+## Function: writeFasta()
 
-**Input** 
+As the name suggests, this function writes multi-fasta files using the table from above. For each gene, it parses the sequence from each respective fasta file and writes them all to one multi-fasta file.
 
-**write_fasta()**
+**Usage**:
+
+```
+library(cmlHelpR)
+writeFasta(orthologies = tbl_lst, 
+                         fasta_dir = "/path/to/sequence_fastas", 
+                         pep_ext = ".pep", 
+                         nuc_ext = ".fa", 
+                         pep_out = "/path/to/peptide/outDir", 
+                         nuc_out = "/path/to/nucleotide/outDir")
+```
+
+**Output**
+
+Here, the output is both the fasta files being written in peptide/nucelotide format at the specified directories, but also a list object that contains the following for each gene:
+
+- Peptide sequences
+- Nucleotide sequences
+- Logical indicating if an internal stop codon was found
+
+```
+$peptide
+  A AAStringSet instance of length 3
+    width seq                                                                                                                                                                                     names               
+[1]   457 SPKAPSLFPLIPSGDNSETIDITIGCLAKNFLPDSIDFSWDNQQNQSIGNQNYIKFPSILSSGTYTAVSQAKVPRSTWDGFQLFYCKATH...WLQNEQPVSESVYFTSKAILESKIQSKGYFAYSMLNISEQEWSAGDSFTCVVGHEAFPYNSIQKTVNKNTGKPSIVNVSLVLSDTSTPCY Laevis
+[2]   480 MTIVHCDNWFDYWGKGTSVTVTAESPKAPSLFPLIPSGDNSETIDITIGCLAKNFLPDSIDFSWDNQRNQSIGNQNYIKFPSILSSGTYT...WLQNEQPVSESVYFTSKAILESKIQSKEYFAYSMLNINEQEWSAGDSFTCVVGHEALHYNSIQKTVNKNTGKPSIVNVSLVLSDTSTPCY Scutatus
+[3]   465 MVTVSSETPKAPSLFPLIPSGDNSETIDITIGCLAKNFLPDSIDFSWDNQRNESIGNQNYIKFPSILSSGTYTAVSQAKVPRSTWDEFQL...WLQNEQPVSESVYFTSKAISESKIQSKEYFAYSMLNISEQEWSAGDSFTCVVGHEALYYGSIQKTVNKNTGKPSIVNVSLVLSDTSTPCY Textilis
+
+$nucleotide
+  A AAStringSet instance of length 3
+    width seq                                                                                                                                                                                     names               
+[1]  1374 TCCCCAAAGGCCCCTTCTCTTTTCCCACTCATCCCATCTGGGGACAACTCAGAGACCATAGATATCACCATCGGATGTCTTGCCAAGAAT...ATTCAGAAGACTGTAAACAAGAACACGGGTAAACCATCCATAGTCAACGTCTCCTTAGTCCTCTCCGACACTTCCACCCCTTGCTATTAA Laevis
+[2]  1443 ATGACTATTGTTCATTGTGACAACTGGTTTGACTATTGGGGAAAAGGCACTTCAGTCACCGTTACTGCAGAATCCCCAAAGGCCccttct...ATTCAGAAGACTGTAAACAAGAACACGGGTAAACCATCCATAGTCAACGTCTCCTTAGTCCTCTCCGACACTTCCACCCCTTGCTATTAA Scutatus
+[3]  1398 ATGGTCACAGTCAGCTCAGAAACCCCAAAGGCCCCTTCTCTTTTCCCACTCATCCCATCTGGGGACAACTCAGAGACCATAGATATCACC...ATTCAGAAGACTGTAAACAAGAACACGGGTAAACCATCCATAGTCAACGTCTCCTTAGTCCTCTCCGACACTTCCACCCCTTGCTATTAA Textilis
+
+$internalStop
+[1] FALSE
+```
 
 **lrt_statistics()**
 
