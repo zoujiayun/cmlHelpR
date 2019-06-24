@@ -122,7 +122,53 @@ $internalStop
 [1] FALSE
 ```
 
-**lrtStatistic()**
+## Function: lrtStatistic()
+
+The `lrtStatistic()` function calculates likelihood ratio tests betweeen two different evolutionary models. In the `Parallel Codeml` repository is an excel file describing which models should be compared (i.e. which models make sense to compare).
+
+**Usage**:
+
+The input for this command is a list of model comparisons and the file path to the output directory that houses the `CODEML` output.
+
+```
+## Libraries needed
+> library(cmlHelpR)
+> library(tidyverse)
+> library(magrittr)
+
+## Build all model comparisons from excel file from paralle codeml
+> comp <- readr::read_csv(file = "/path/to/pararllel_codeml/ctl_parameter_files/190410_model_comparisons.csv") %>%
+                          select(3:4) %>%
+                          filter(comparison != "NA") %>%
+                          group_split(id) %>%
+                          map(~flatten_chr(.), . == "")
+                          
+## An alternative way to make the comparisons
+> comp <- list(c("M1a", "M2a"), c("ModelA", "M1a"))
+
+## Run comand
+> out <- lrtStatistic(dir_path = "/path/to/codeml/outputDir", lst_comparisons = comp)
+```
+
+**Output**:
+
+The output is a list of dataframes, where each data frame corresponds to each model comparison.
+
+```
+$M2a_M1a
+# A tibble: 9 x 9
+  gene              tree             np_M1a np_M2a lnL_M1a lnL_M2a      delta    df         pval
+  <chr>             <chr>             <dbl>  <dbl>   <dbl>   <dbl>      <dbl> <dbl>        <dbl>
+1 1433E-YWHAE-YWHAE brownForeground       7      9  -1026.  -1026.  0.0000660     2        1.000       
+2 1433E-YWHAE-YWHAE laevisForeground      7      9  -1026.  -1026.  0.0000660     2        1.000       
+3 1433E-YWHAE-YWHAE tigerForeground       7      9  -1026.  -1026.  0.0000660     2        1.000       
+4 1433T-YWHAQ-YWHAQ brownForeground       7      9  -1024.  -1006.  35.7          2        0.0000000179
+5 1433T-YWHAQ-YWHAQ laevisForeground      7      9  -1024.  -1006.  35.7          2        0.0000000179
+6 1433T-YWHAQ-YWHAQ tigerForeground       7      9  -1024.  -1006.  35.7          2        0.0000000179
+7 1433Z-YWHAZ-YWHAZ brownForeground       7      9   -967.   -967.  0.0000340     2        1.000       
+8 1433Z-YWHAZ-YWHAZ laevisForeground      7      9   -967.   -967.  0.0000340     2        1.000       
+9 1433Z-YWHAZ-YWHAZ tigerForeground       7      9   -967.   -967.  0.0000340     2        1.000
+```
 
 **parse_BEB()**
 
