@@ -6,9 +6,12 @@ The functions are continually being tweaked, and in many instances serve a speci
 
 In the sections below I'll demonstrate some use cases of the major functions of interest.
 
-## Developmenet
+## Installation
 
-- TBD
+```
+> devtools::github_install("a-lud/cmlHelpR")
+> library(cmlHelpR)
+```
 
 ## Tutorial
 
