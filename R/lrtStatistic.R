@@ -8,21 +8,11 @@
 #' @export
 #' @examples
 #' lrt_statistic(dir_path = "path/to/codeml_out", models = c("M1a", "M2a"), lst_comparisons = c("M1a", "M2a"))
-
-comp <- readr::read_csv(file = "~/Documents/pipelines/pararllel_codeml/ctl_parameter_files/190410_model_comparisons.csv") %>%
-  select(3:4) %>%
-  filter(comparison != "NA") %>%
-  group_split(id) %>%
-  map(~flatten_chr(.), . == "")
-
-comp <- comp[4]
-
-t <- lrtStatistic(dir_path = "~/Documents/pipelines/pararllel_codeml/test_data/test_output", lst_comparisons = comp)
-
 lrtStatistic <- function(dir_path, lst_comparisons) {
 
   ## Models
   m <- unlist(lst_comparisons)
+  m <- unique(m)
 
   ## Selecting output dirs for analysis
   d <- list.dirs(path = dir_path, full.names = TRUE)
