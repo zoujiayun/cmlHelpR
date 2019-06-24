@@ -122,7 +122,7 @@ $internalStop
 [1] FALSE
 ```
 
-**lrt_statistics()**
+**lrtStatistic()**
 
 **parse_BEB()**
 
