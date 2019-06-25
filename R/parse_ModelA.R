@@ -1,7 +1,7 @@
 #' Parse BEB output from ModelA codeml output
 #'
 #' General run down of what it does
-#' @param lst List of codeml output files
+#' @param lines List of codeml output files
 #' @param c number of cores
 #' @keywords internal
 .parse_ModelA <- function(lines, c) {
