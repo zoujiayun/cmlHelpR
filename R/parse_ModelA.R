@@ -4,9 +4,9 @@
 #' @param lst List of codeml output files
 #' @param c number of cores
 #' @keywords internal
-.parse_ModelA <- function(lst, c) {
+.parse_ModelA <- function(lines, c) {
 
-  obj <- parallel::mclapply(lst, mc.cores = c, function(y) {
+  obj <- parallel::mclapply(lines, mc.cores = c, function(y) {
 
     s <- grep(pattern = "Bayes Empirical Bayes", x = y)
     e <- grep(pattern = "^The grid", x = y)
@@ -28,17 +28,16 @@
   df <- dplyr::bind_rows(df, .id = "id")
   df <- dplyr::mutate(.data = df, value = stringr::str_replace_all(string = value, pattern = "\\s+", replacement = "_"))
   df <- dplyr::filter(.data = df, value != "")
-  df <- tidyr::separate(data = df, col = value, into = c("pos", "aa", "val", "postMean", "plusMinus", "SE"), sep = "_")
+  df <- suppressWarnings(tidyr::separate(data = df, col = value, into = c("pos", "aa", "val", "postMean", "plusMinus", "SE"), sep = "_"))
   df <- dplyr::mutate(.data = df,
                       signif = stringr::str_extract(string = val, pattern = "\\*+"),
-                      val = as.numeric(stringr::str_remove_all(string = val, pattern = "\\*")),
+                      val = suppressWarnings(as.numeric(stringr::str_remove_all(string = val, pattern = "\\*"))),
                       pval = 1 - val,
                       aa = dplyr::na_if(x = aa, "NA"))
-  df <- dplyr::mutate_at(.tbl = df, .vars = c("pos", "postMean", "SE"), .funs = as.numeric)
+  df <- suppressWarnings(dplyr::mutate_at(.tbl = df, .vars = c("pos", "postMean", "SE"), .funs = as.numeric))
   df <- tidyr::separate(data = df, col = id, into = c("gene", "tree"), sep = "_")
   df <- dplyr::select(.data = df, gene, tree, pos, aa, val, pval, signif, postMean, SE)
 
   return(df)
 
 }
-
