@@ -27,17 +27,14 @@ parseBEB <- function(dir_path, models, out_path = NULL, cores = 1) {
   d <- d[stringr::str_detect(string = d, pattern = paste(models, "$", sep = "", collapse = "|"))]
   d <- magrittr::set_names(x = d, value = models)
 
-  # dirs <- list.dirs(path = dir_path, full.names = TRUE)[stringr::str_detect(string = list.dirs(path = dir_path, full.names = TRUE), pattern = paste(models, "$", sep = "", collapse = "|"))]
-  # dirs <- magrittr::set_names(x = dirs, value = models)
-  #
-  # ## Importing data
-  # print("Reading output files")
-  # files <- purrr::map(dirs, ~{
-  #   fl <- list.files(path = .x, pattern = ".out", full.names = TRUE)
-  #   fl <- magrittr::set_names(x = fl, value = sub(".out", "", basename(fl)))
-  #   purrr::map(fl, readr::read_lines)
-  # })
-  #
+  ## Importing data
+  print("Reading output files")
+  f <- purrr::map(d, ~{
+    fl <- list.files(path = .x, pattern = ".out", full.names = TRUE)
+    fl <- magrittr::set_names(x = fl, value = sub(".out", "", basename(fl)))
+    purrr::map(fl, readr::read_lines)
+  })
+
   # ## Parsing BEB from models
   # beb <- purrr::map(.x = names(files), ~{
   #
