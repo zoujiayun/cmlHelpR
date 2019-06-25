@@ -191,6 +191,20 @@ out <- parseBEB(dir_path = "/path/to/codeml/output",
 The output is a list object housing a list split by model and a nested dataframe object, where the data are grouped by their models. Rows that are all `NA` are those that did not have any BEB information to parse.
 
 ```
+$long
+   # A tibble: 62,594 x 11
+   model gene              tree               pos aa       val   pval signif postMean    SE no_gap_length
+   <chr> <chr>             <chr>            <dbl> <chr>  <dbl>  <dbl> <chr>     <dbl> <dbl>         <dbl>
+    1 M2a   1433E-YWHAE-YWHAE brownForeground     NA NA    NA     NA     NA        NA    NA              765
+    2 M2a   1433E-YWHAE-YWHAE laevisForeground    NA NA    NA     NA     NA        NA    NA              765
+    3 M2a   1433E-YWHAE-YWHAE tigerForeground     NA NA    NA     NA     NA        NA    NA              765
+    4 M2a   1433T-YWHAQ-YWHAQ brownForeground    227 E      0.991  0.009 **         9.63  1.37           735
+    5 M2a   1433T-YWHAQ-YWHAQ brownForeground    228 Y      0.978  0.022 *          9.51  1.69           735
+    6 M2a   1433T-YWHAQ-YWHAQ brownForeground    229 G      0.973  0.027 *          9.47  1.79           735
+    7 M2a   1433T-YWHAQ-YWHAQ brownForeground    230 F      0.941  0.059 NA         9.19  2.37           735
+    8 M2a   1433T-YWHAQ-YWHAQ brownForeground    231 I      0.967  0.033 *          9.42  1.91           735
+    9 M2a   1433T-YWHAQ-YWHAQ brownForeground    232 I      0.854  0.146 NA         8.40  3.39           735
+   10 M2a   1433T-YWHAQ-YWHAQ laevisForeground   227 E      0.991  0.009 **         9.63  1.37           735
 $list
    $list$M2a
    # A tibble: 23,967 x 11
