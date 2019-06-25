@@ -7,11 +7,15 @@
 #' @export
 #' @examples
 #' parse_BEB(dir_path = "path/to/parent_out", models = c("M2a", "M8", "ModelA"), out_path = "path/to/output/name.tsv", cores = 4)
+
+t <- parseBEB(dir_path = "~/Documents/pipelines/pararllel_codeml/test_data/test_output", models = "ModelA", cores = 4)
+
 parseBEB <- function(dir_path, models, out_path = NULL, cores = 1) {
 
+  ## Models with BEB output
   m <- c("M2a", "M8", "ModelA")
 
-  ## Conditional
+  ## Check model inputs
   if (!all(models %in% m)) {
     print(paste("Accepted models:", m, sep = " "))
     print(paste("Your models:", models, sep = " "))
@@ -19,58 +23,62 @@ parseBEB <- function(dir_path, models, out_path = NULL, cores = 1) {
   }
 
   ## Importing all log files
-  dirs <- list.dirs(path = dir_path, full.names = TRUE)[stringr::str_detect(string = list.dirs(path = dir_path, full.names = TRUE), pattern = paste(models, "$", sep = "", collapse = "|"))]
-  dirs <- magrittr::set_names(x = dirs, value = models)
+  d <- list.dirs(path = dir_path, full.names = TRUE)
+  d <- d[stringr::str_detect(string = d, pattern = paste(models, "$", sep = "", collapse = "|"))]
+  d <- magrittr::set_names(x = d, value = models)
 
-  ## Importing data
-  print("Reading output files")
-  files <- purrr::map(dirs, ~{
-    fl <- list.files(path = .x, pattern = ".out", full.names = TRUE)
-    fl <- magrittr::set_names(x = fl, value = sub(".out", "", basename(fl)))
-    purrr::map(fl, readr::read_lines)
-  })
-
-  ## Parsing BEB from models
-  beb <- purrr::map(.x = names(files), ~{
-
-    print(paste("Parsing BEB from:", .x, sep = " "))
-
-    if (.x == "M2a" | .x == "M8") {
-
-      .parse_m2a_M8(lst = files[[.x]], c = cores)
-
-    } else if (.x == "ModelA") {
-
-      .parse_ModelA(lst = files[[.x]], c = cores)
-
-    }
-
-  })
-
-  ## Single tibble
-  beb <- magrittr::set_names(x = beb, value = names(files))
-  beb <- dplyr::bind_rows(beb, .id = "model")
-
-  print("Getting no-gap-length value")
-  alnLength <- purrr::map(files[[1]], ~{
-
-    r <- head(x = .x, n = 3)
-    r <- trimws(x = r)
-    r <- r[stringr::str_detect(string = r, pattern = "^3")]
-    r <- stringr::str_split(string = r, pattern = "\\s+")
-    r <- unlist(x = r)
-    tibble::tibble(no_gap_length = as.numeric(r[[2]]))
-
-  })
-
-  alnLength <- dplyr::bind_rows(alnLength, .id = "condition")
-  alnLength <- tidyr::separate(data = alnLength, col = condition, into = c("gene", "tree"), sep = "_")
-
-  beb <- dplyr::left_join(beb, alnLength)
-
-  ## Write outputs
-  if (!is.null(out_path)) {
-    readr::write_tsv(x = beb, path = out_path, col_names = TRUE)
-  }
-  return(beb)
+  # dirs <- list.dirs(path = dir_path, full.names = TRUE)[stringr::str_detect(string = list.dirs(path = dir_path, full.names = TRUE), pattern = paste(models, "$", sep = "", collapse = "|"))]
+  # dirs <- magrittr::set_names(x = dirs, value = models)
+  #
+  # ## Importing data
+  # print("Reading output files")
+  # files <- purrr::map(dirs, ~{
+  #   fl <- list.files(path = .x, pattern = ".out", full.names = TRUE)
+  #   fl <- magrittr::set_names(x = fl, value = sub(".out", "", basename(fl)))
+  #   purrr::map(fl, readr::read_lines)
+  # })
+  #
+  # ## Parsing BEB from models
+  # beb <- purrr::map(.x = names(files), ~{
+  #
+  #   print(paste("Parsing BEB from:", .x, sep = " "))
+  #
+  #   if (.x == "M2a" | .x == "M8") {
+  #
+  #     .parse_m2a_M8(lst = files[[.x]], c = cores)
+  #
+  #   } else if (.x == "ModelA") {
+  #
+  #     .parse_ModelA(lst = files[[.x]], c = cores)
+  #
+  #   }
+  #
+  # })
+  #
+  # ## Single tibble
+  # beb <- magrittr::set_names(x = beb, value = names(files))
+  # beb <- dplyr::bind_rows(beb, .id = "model")
+  #
+  # print("Getting no-gap-length value")
+  # alnLength <- purrr::map(files[[1]], ~{
+  #
+  #   r <- head(x = .x, n = 3)
+  #   r <- trimws(x = r)
+  #   r <- r[stringr::str_detect(string = r, pattern = "^3")]
+  #   r <- stringr::str_split(string = r, pattern = "\\s+")
+  #   r <- unlist(x = r)
+  #   tibble::tibble(no_gap_length = as.numeric(r[[2]]))
+  #
+  # })
+  #
+  # alnLength <- dplyr::bind_rows(alnLength, .id = "condition")
+  # alnLength <- tidyr::separate(data = alnLength, col = condition, into = c("gene", "tree"), sep = "_")
+  #
+  # beb <- dplyr::left_join(beb, alnLength)
+  #
+  # ## Write outputs
+  # if (!is.null(out_path)) {
+  #   readr::write_tsv(x = beb, path = out_path, col_names = TRUE)
+  # }
+  # return(beb)
 }
