@@ -35,23 +35,23 @@ parseBEB <- function(dir_path, models, out_path = NULL, cores = 1) {
     purrr::map(fl, readr::read_lines)
   })
 
-  # ## Parsing BEB from models
-  # beb <- purrr::map(.x = names(files), ~{
-  #
-  #   print(paste("Parsing BEB from:", .x, sep = " "))
-  #
-  #   if (.x == "M2a" | .x == "M8") {
-  #
-  #     .parse_m2a_M8(lst = files[[.x]], c = cores)
-  #
-  #   } else if (.x == "ModelA") {
-  #
-  #     .parse_ModelA(lst = files[[.x]], c = cores)
-  #
-  #   }
-  #
-  # })
-  #
+  ## Parsing BEB from models
+  beb <- purrr::map(.x = names(f), ~{
+
+    # print(paste("Parsing BEB from:", .x, sep = " "))
+    if (.x == "M2a" | .x == "M8") {
+
+      .parse_m2a_M8(lst = f[[.x]], c = cores)
+
+    } else if (.x == "ModelA") {
+
+      .parse_ModelA(lst = f[[.x]], c = cores)
+
+    }
+
+  })
+  return(beb)
+
   # ## Single tibble
   # beb <- magrittr::set_names(x = beb, value = names(files))
   # beb <- dplyr::bind_rows(beb, .id = "model")
