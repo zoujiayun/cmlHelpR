@@ -7,9 +7,6 @@
 #' @export
 #' @examples
 #' parse_BEB(dir_path = "path/to/parent_out", models = c("M2a", "M8", "ModelA"), out_path = "path/to/output/name.tsv", cores = 4)
-
-t <- parseBEB(dir_path = "~/Documents/projects/Kate_general/analyses/1906_dNdS/04_codeml", models = c("ModelA", "M2a"), cores = 4)
-
 parseBEB <- function(dir_path, models, out_path = NULL, cores = 1) {
 
   ## Models with BEB output
@@ -55,29 +52,29 @@ parseBEB <- function(dir_path, models, out_path = NULL, cores = 1) {
   })
 
   ## Single tibble
-  # beb <- magrittr::set_names(x = beb, value = names(files))
-  # beb <- dplyr::bind_rows(beb, .id = "model")
+  beb <- magrittr::set_names(x = beb, value = names(f))
+  beb <- dplyr::bind_rows(beb, .id = "model")
 
-  # print("Getting no-gap-length value")
-  # alnLength <- purrr::map(files[[1]], ~{
-  #
-  #   r <- head(x = .x, n = 3)
-  #   r <- trimws(x = r)
-  #   r <- r[stringr::str_detect(string = r, pattern = "^3")]
-  #   r <- stringr::str_split(string = r, pattern = "\\s+")
-  #   r <- unlist(x = r)
-  #   tibble::tibble(no_gap_length = as.numeric(r[[2]]))
-  #
-  # })
-  #
-  # alnLength <- dplyr::bind_rows(alnLength, .id = "condition")
-  # alnLength <- tidyr::separate(data = alnLength, col = condition, into = c("gene", "tree"), sep = "_")
-  #
-  # beb <- dplyr::left_join(beb, alnLength)
-  #
-  # ## Write outputs
-  # if (!is.null(out_path)) {
-  #   readr::write_tsv(x = beb, path = out_path, col_names = TRUE)
-  # }
-  # return(beb)
+  print("Getting no-gap-length value")
+  alnLength <- purrr::map(f[[1]], ~{
+
+    r <- head(x = .x, n = 3)
+    r <- trimws(x = r)
+    r <- r[stringr::str_detect(string = r, pattern = "^3")]
+    r <- stringr::str_split(string = r, pattern = "\\s+")
+    r <- unlist(x = r)
+    tibble::tibble(no_gap_length = as.numeric(r[[2]]))
+
+  })
+
+  alnLength <- dplyr::bind_rows(alnLength, .id = "condition")
+  alnLength <- tidyr::separate(data = alnLength, col = condition, into = c("gene", "tree"), sep = "_")
+
+  beb <- dplyr::left_join(beb, alnLength)
+
+  ## Write outputs
+  if (!is.null(out_path)) {
+    readr::write_tsv(x = beb, path = out_path, col_names = TRUE)
+  }
+  return(beb)
 }
