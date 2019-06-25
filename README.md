@@ -246,7 +246,45 @@ $nested
 2 ModelA <tibble [38,627 × 10]>
 ```
 
-**BEBDF2Freq()**
+## Function: beb2freq()
+
+This is an accessory function for downstream analysis. Once you've got the long-format dataframe from `parseBEB()`, you might want to get a count of how many sites were under selection in each gene. This is especially useful for when you run multiple models and multiple trees.
+
+**Usage**
+
+The function is a simple one. It only needs the long-format dataframe from the `parseBEB()` function, a logical specifying if you want to extract significant sites only or not and optionally a frequency threshold (keeps sites with a frequency $\leq$).
+
+```
+beb2freq(df_beb = t$list$M2a, 
+         only_signif = TRUE,
+         max_freq = ...)
+```
+
+**Output**
+
+The output is a `data.frame` object where the genes are the row names and the trees that were run are the columns. The value in each cell corresponds to the number of sites that were reported as under selection for that gene in that condition.
+
+In the example below, the number of sites reported are consistent across all trees due to the nature of the model that was run.
+
+```
+Joining, by = "gene"
+                                brownForeground laevisForeground tigerForeground
+1433T-YWHAQ-YWHAQ                             4                4               4
+2A5D-PPP2R5D-PPP2R5D                         18               18              18
+5NTC-NT5C2-NT5C2                              7                7               7
+A4GCT-A4GNT-A4GNT                             6                6               6
+AAPK2-PRKAA2-PRKAA2                           3                3               3
+AASD1-LOC113425478-LOC113449799               9                9               9
+AATC-GOT1-GOT1                               21               21              21
+ABD18-ABHD18-ABHD18                          12               12              12
+ACADM-ACADM-ACADM                             7                7               7
+ACSS3-ACSS3-ACSS3                             5                5               5
+...                                          ...              ...             ...
+XRP2-RP2-RP2                                  4                4               4
+ZDH18-ZDHHC18-ZDHHC18                         2                2               2
+ZDHC2-ZDHHC2-ZDHHC2                           2                2               2
+ZDHC8-ZDHHC8-ZDHHC8                           1                1               1
+```
 
 **getBranchdNdS()**
 
