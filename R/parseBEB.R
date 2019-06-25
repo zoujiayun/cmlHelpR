@@ -77,7 +77,7 @@ parseBEB <- function(dir_path, models, cores = 1) {
   nst <- dplyr::group_by(.data = beb, model)
   nst <- tidyr::nest(data = nst, .key = "BEB")
 
-  o <- list(list = lst, nested = nst)
+  o <- list(long = beb, list = lst, nested = nst)
 
   return(o)
 }
