@@ -8,7 +8,7 @@
 #' @examples
 #' parse_BEB(dir_path = "path/to/parent_out", models = c("M2a", "M8", "ModelA"), out_path = "path/to/output/name.tsv", cores = 4)
 
-t <- parseBEB(dir_path = "~/Documents/pipelines/pararllel_codeml/test_data/test_output", models = "ModelA", cores = 4)
+t <- parseBEB(dir_path = "~/Documents/projects/Kate_general/analyses/1906_dNdS/04_codeml", models = c("ModelA", "M2a"), cores = 4)
 
 parseBEB <- function(dir_path, models, out_path = NULL, cores = 1) {
 
@@ -25,7 +25,10 @@ parseBEB <- function(dir_path, models, out_path = NULL, cores = 1) {
   ## Importing all log files
   d <- list.dirs(path = dir_path, full.names = TRUE)
   d <- d[stringr::str_detect(string = d, pattern = paste(models, "$", sep = "", collapse = "|"))]
-  d <- magrittr::set_names(x = d, value = models)
+
+  ## Setting names of dirs vector
+  n <- sub(".*/", "", d)
+  d <- magrittr::set_names(x = d, value = n)
 
   ## Importing data
   print("Reading output files")
@@ -41,21 +44,20 @@ parseBEB <- function(dir_path, models, out_path = NULL, cores = 1) {
     # print(paste("Parsing BEB from:", .x, sep = " "))
     if (.x == "M2a" | .x == "M8") {
 
-      .parse_m2a_M8(lst = f[[.x]], c = cores)
+      .parse_m2a_M8(lines = f[[.x]], c = cores)
 
     } else if (.x == "ModelA") {
 
-      .parse_ModelA(lst = f[[.x]], c = cores)
+      .parse_ModelA(lines = f[[.x]], c = cores)
 
     }
 
   })
-  return(beb)
 
-  # ## Single tibble
+  ## Single tibble
   # beb <- magrittr::set_names(x = beb, value = names(files))
   # beb <- dplyr::bind_rows(beb, .id = "model")
-  #
+
   # print("Getting no-gap-length value")
   # alnLength <- purrr::map(files[[1]], ~{
   #
