@@ -7,7 +7,7 @@
 #' @export
 #' @examples
 #' parse_BEB(dir_path = "path/to/parent_out", models = c("M2a", "M8", "ModelA"), out_path = "path/to/output/name.tsv", cores = 4)
-parseBEB <- function(dir_path, models, out_path = NULL, cores = 1) {
+parseBEB <- function(dir_path, models, cores = 1) {
 
   ## Models with BEB output
   m <- c("M2a", "M8", "ModelA")
@@ -72,9 +72,12 @@ parseBEB <- function(dir_path, models, out_path = NULL, cores = 1) {
 
   beb <- dplyr::left_join(beb, alnLength)
 
-  ## Write outputs
-  if (!is.null(out_path)) {
-    readr::write_tsv(x = beb, path = out_path, col_names = TRUE)
-  }
-  return(beb)
+  ## Return a list object of long form and nested
+  lst <- split(x = beb, beb[["model"]])
+  nst <- dplyr::group_by(.data = beb, model)
+  nst <- tidyr::nest(data = nst, .key = "BEB")
+
+  o <- list(list = lst, nested = nst)
+
+  return(o)
 }
