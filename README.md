@@ -286,7 +286,57 @@ ZDHC2-ZDHHC2-ZDHHC2                           2                2               2
 ZDHC8-ZDHHC8-ZDHHC8                           1                1               1
 ```
 
-**getBranchdNdS()**
+## Function: getBranchDNDS()
+
+This is a parsing function to get the branch `dN/dS` values from the `CODEML` output files.
+
+**Usage**
+
+Simply pass the file path to the `CODEML` output directory. I've hard coded which evolutionary models have branch `dN/dS` values into the code. Then, pass a vector of models you want to get `dN/dS` values for.
+
+```
+getBranchDNDS(file_list = "/path/to/codeml_out")
+```
+
+**Output**
+
+The branch `dN/dS` values are returned in two formats; list and dataframe. The list variant is each genes branch value, while the dataframe version is a nested structure grouped by model, gene and tree.
+
+```
+$list
+  $list$`M8_1433E-YWHAE-YWHAE_brownForeground`
+  # A tibble: 4 x 9
+    branch     t     N     S `dN/dS`    dN     dS `N*dN` `S*dS`
+    <chr>  <dbl> <dbl> <dbl>   <dbl> <dbl>  <dbl>  <dbl>  <dbl>
+  1 4..5   0      486.  279.       0     0 0           0      0
+  2 5..1   0.004  486.  279.       0     0 0.0035      0      1
+  3 5..2   0.004  486.  279.       0     0 0.0035      0      1
+  4 4..3   0      486.  279.       0     0 0           0      0
+  
+  $list$`M8_1433E-YWHAE-YWHAE_laevisForeground`
+  # A tibble: 4 x 9
+    branch     t     N     S `dN/dS`    dN     dS `N*dN` `S*dS`
+    <chr>  <dbl> <dbl> <dbl>   <dbl> <dbl>  <dbl>  <dbl>  <dbl>
+  1 4..5   0      486.  279.       0     0 0           0      0
+  2 5..1   0.004  486.  279.       0     0 0.0035      0      1
+  3 5..2   0.004  486.  279.       0     0 0.0035      0      1
+  4 4..3   0      486.  279.       0     0 0           0      0
+$dataframe
+  # A tibble: 9,333 x 4
+   model gene                 tree             branch          
+   <chr> <chr>                <chr>            <list>          
+ 1 M8    1433E-YWHAE-YWHAE    brownForeground  <tibble [4 × 9]>
+ 2 M8    1433E-YWHAE-YWHAE    laevisForeground <tibble [4 × 9]>
+ 3 M8    1433E-YWHAE-YWHAE    tigerForeground  <tibble [4 × 9]>
+ 4 M8    1433T-YWHAQ-YWHAQ    brownForeground  <tibble [4 × 9]>
+ 5 M8    1433T-YWHAQ-YWHAQ    laevisForeground <tibble [4 × 9]>
+ 6 M8    1433T-YWHAQ-YWHAQ    tigerForeground  <tibble [4 × 9]>
+ 7 M8    1433Z-YWHAZ-YWHAZ    brownForeground  <tibble [4 × 9]>
+ 8 M8    1433Z-YWHAZ-YWHAZ    laevisForeground <tibble [4 × 9]>
+ 9 M8    1433Z-YWHAZ-YWHAZ    tigerForeground  <tibble [4 × 9]>
+10 M8    2A5D-PPP2R5D-PPP2R5D brownForeground  <tibble [4 × 9]>
+# … with 9,323 more rows
+```
 
 **getPW()**
 
