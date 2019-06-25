@@ -170,7 +170,67 @@ $M2a_M1a
 9 1433Z-YWHAZ-YWHAZ tigerForeground       7      9   -967.   -967.  0.0000340     2        1.000
 ```
 
-**parse_BEB()**
+## Function: parseBEB()
+
+Bayes Empirical Bayes (BEB) data is reported for some models (e.g. ModelA, M2a and M8) which represents putative sites under selection. This function parses that information into an easy to use dataframe object that can be manipulated for down-stream analysis.
+
+**Usage**
+
+Input is simply the directory path to where the `CODEML` output is, the models you want to extract the BEB data for and the number of cores to parse the outputs with. It's important to note here that this function operates off the output directories having the name of their model. If you change the output directory names, e.g. to `M2a_first_output`, this function will not work.
+
+I have written these scripts to work directly with the output of the `parallel codeml` pipeline. If you want to update them, by all means do.
+
+```
+out <- parseBEB(dir_path = "/path/to/codeml/output", 
+              models = c("M2a", "ModelA"), 
+              cores = 4)
+```
+
+**Output**:
+
+The output is a list object housing a list split by model and a nested dataframe object, where the data are grouped by their models. Rows that are all `NA` are those that did not have any BEB information to parse.
+
+```
+$list
+   $list$M2a
+   # A tibble: 23,967 x 11
+      model gene              tree               pos aa       val   pval signif postMean    SE no_gap_length
+      <chr> <chr>             <chr>            <dbl> <chr>  <dbl>  <dbl> <chr>     <dbl> <dbl>         <dbl>
+    1 M2a   1433E-YWHAE-YWHAE brownForeground     NA NA    NA     NA     NA        NA    NA              765
+    2 M2a   1433E-YWHAE-YWHAE laevisForeground    NA NA    NA     NA     NA        NA    NA              765
+    3 M2a   1433E-YWHAE-YWHAE tigerForeground     NA NA    NA     NA     NA        NA    NA              765
+    4 M2a   1433T-YWHAQ-YWHAQ brownForeground    227 E      0.991  0.009 **         9.63  1.37           735
+    5 M2a   1433T-YWHAQ-YWHAQ brownForeground    228 Y      0.978  0.022 *          9.51  1.69           735
+    6 M2a   1433T-YWHAQ-YWHAQ brownForeground    229 G      0.973  0.027 *          9.47  1.79           735
+    7 M2a   1433T-YWHAQ-YWHAQ brownForeground    230 F      0.941  0.059 NA         9.19  2.37           735
+    8 M2a   1433T-YWHAQ-YWHAQ brownForeground    231 I      0.967  0.033 *          9.42  1.91           735
+    9 M2a   1433T-YWHAQ-YWHAQ brownForeground    232 I      0.854  0.146 NA         8.40  3.39           735
+   10 M2a   1433T-YWHAQ-YWHAQ laevisForeground   227 E      0.991  0.009 **         9.63  1.37           735
+   # … with 23,957 more rows
+
+$list$ModelA
+   # A tibble: 38,627 x 11
+      model  gene              tree               pos aa       val    pval signif postMean    SE no_gap_length
+      <chr>  <chr>             <chr>            <dbl> <chr>  <dbl>   <dbl> <chr>     <dbl> <dbl>         <dbl>
+    1 ModelA 1433E-YWHAE-YWHAE brownForeground     NA NA    NA     NA      NA           NA    NA           765
+    2 ModelA 1433E-YWHAE-YWHAE laevisForeground    NA NA    NA     NA      NA           NA    NA           765
+    3 ModelA 1433E-YWHAE-YWHAE tigerForeground     NA NA    NA     NA      NA           NA    NA           765
+    4 ModelA 1433T-YWHAQ-YWHAQ brownForeground     NA NA    NA     NA      NA           NA    NA           735
+    5 ModelA 1433T-YWHAQ-YWHAQ laevisForeground   227 E      0.995  0.005  **           NA    NA           735
+    6 ModelA 1433T-YWHAQ-YWHAQ laevisForeground   228 Y      0.987  0.013  *            NA    NA           735
+    7 ModelA 1433T-YWHAQ-YWHAQ laevisForeground   229 G      0.986  0.014  *            NA    NA           735
+    8 ModelA 1433T-YWHAQ-YWHAQ laevisForeground   230 F      0.97   0.03   *            NA    NA           735
+    9 ModelA 1433T-YWHAQ-YWHAQ laevisForeground   231 I      0.985  0.015  *            NA    NA           735
+   10 ModelA 1433T-YWHAQ-YWHAQ laevisForeground   232 I      0.909  0.0910 NA           NA    NA           735
+   # … with 38,617 more rows
+
+$nested
+# A tibble: 2 x 2
+  model  BEB                   
+  <chr>  <list>                
+1 M2a    <tibble [23,967 × 10]>
+2 ModelA <tibble [38,627 × 10]>
+```
 
 **BEBDF2Freq()**
 
