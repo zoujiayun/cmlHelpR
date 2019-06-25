@@ -252,7 +252,7 @@ This is an accessory function for downstream analysis. Once you've got the long-
 
 **Usage**
 
-The function is a simple one. It only needs the long-format dataframe from the `parseBEB()` function, a logical specifying if you want to extract significant sites only or not and optionally a frequency threshold (keeps sites with a frequency $\leq$ ).
+The function is a simple one. It only needs the long-format dataframe from the `parseBEB()` function, a logical specifying if you want to extract significant sites only and optionally a frequency threshold to filter sites on.
 
 ```
 beb2freq(df_beb = t$list$M2a, 
