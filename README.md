@@ -338,7 +338,98 @@ $dataframe
 # … with 9,323 more rows
 ```
 
-**getPW()**
+## Function: getPW()
+
+This function parses the `dN/dS` values for site classes. Not every model provides this information, and those that do have this information have it presented in variable ways.
+
+**Usage**
+
+Input for this function is simply the directory path to where the `CODEML` output directory is, a vector of models and the extension of the output files (defaults to `.out`).
+
+```
+library(cmlHelpR)
+
+getPW(dir_path = "path/to/codeml_out", 
+      models = c("ModelA", "M1a", "M8"), 
+      ext = ".custom.out")
+
+```
+
+**Output**
+
+The output is a list object containing lists of dataframes. The first object in the parent list is a list of long-format dataframes called `$long_list`. These are all the genes and their values concatenated together.
+
+The second list object is a list of nested dataframes under the index identifier `$nested_list`. These nested dataframes are simply the long-format dataframes grouped by their model, gene and tree. The data column is a dataframe object that contains the values corresponding to that model + gene + tree combination. 
+
+```
+$long_list
+  $long_list$M2a_Rel
+  # A tibble: 18 x 4
+     model_gene_tree                            var   K1      K2     
+     <chr>                                      <chr> <chr>   <chr>  
+   1 M2a_Rel_1433E-YWHAE-YWHAE_brownForeground  p     0.99717 0.00000
+   2 M2a_Rel_1433E-YWHAE-YWHAE_brownForeground  w     0.00000 1.00000
+   3 M2a_Rel_1433E-YWHAE-YWHAE_laevisForeground p     0.99717 0.00000
+   4 M2a_Rel_1433E-YWHAE-YWHAE_laevisForeground w     0.00000 1.00000
+   5 M2a_Rel_1433E-YWHAE-YWHAE_tigerForeground  p     0.99717 0.00000
+   6 M2a_Rel_1433E-YWHAE-YWHAE_tigerForeground  w     0.00000 1.00000
+   ...
+  
+  $long_list$M8
+  # A tibble: 18 x 13
+     model_gene_tree                       var   K1      K2      K3      K4      K5      K6      K7      K8      K9      K10     K11     
+     <chr>                                 <chr> <chr>   <chr>   <chr>   <chr>   <chr>   <chr>   <chr>   <chr>   <chr>   <chr>   <chr>   
+   1 M8_1433E-YWHAE-YWHAE_brownForeground  p     0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.00001 
+   2 M8_1433E-YWHAE-YWHAE_brownForeground  w     0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 1.00000 
+   3 M8_1433E-YWHAE-YWHAE_laevisForeground p     0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.00001 
+   4 M8_1433E-YWHAE-YWHAE_laevisForeground w     0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 1.00000 
+   5 M8_1433E-YWHAE-YWHAE_tigerForeground  p     0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.00001 
+   6 M8_1433E-YWHAE-YWHAE_tigerForeground  w     0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 1.00000 
+   ...
+  
+  $long_list$ModelA
+  # A tibble: 27 x 6
+     model_gene_tree                           `site-class` `0`     `1`     `2a`    `2b`   
+     <chr>                                     <chr>        <chr>   <chr>   <chr>   <chr>  
+   1 ModelA_1433E-YWHAE-YWHAE_brownForeground  proportion   1.00000 0.00000 0.00000 0.00000
+   2 ModelA_1433E-YWHAE-YWHAE_brownForeground  background-w 0.00000 1.00000 0.00000 1.00000
+   3 ModelA_1433E-YWHAE-YWHAE_brownForeground  foreground-w 0.00000 1.00000 2.21524 2.21524
+   4 ModelA_1433E-YWHAE-YWHAE_laevisForeground proportion   1.00000 0.00000 0.00000 0.00000
+   5 ModelA_1433E-YWHAE-YWHAE_laevisForeground background-w 0.00000 1.00000 0.00000 1.00000
+   6 ModelA_1433E-YWHAE-YWHAE_laevisForeground foreground-w 0.00000 1.00000 1.00000 1.00000
+   7 ModelA_1433E-YWHAE-YWHAE_tigerForeground  proportion   1.00000 0.00000 0.00000 0.00000
+   8 ModelA_1433E-YWHAE-YWHAE_tigerForeground  background-w 0.00000 1.00000 0.00000 1.00000
+   9 ModelA_1433E-YWHAE-YWHAE_tigerForeground  foreground-w 0.00000 1.00000 1.00000 1.00000
+   ...
+
+$nested_list
+  $nested_list$M2a_Rel
+  # A tibble: 9 x 4
+    model   gene              tree             data            
+    <chr>   <chr>             <chr>            <list>          
+  1 M2a_Rel 1433E-YWHAE-YWHAE brownForeground  <tibble [2 × 3]>
+  2 M2a_Rel 1433E-YWHAE-YWHAE laevisForeground <tibble [2 × 3]>
+  3 M2a_Rel 1433E-YWHAE-YWHAE tigerForeground  <tibble [2 × 3]>
+  ...
+  
+  $nested_list$M8
+  # A tibble: 9 x 4
+    model gene              tree             data             
+    <chr> <chr>             <chr>            <list>           
+  1 M8    1433E-YWHAE-YWHAE brownForeground  <tibble [2 × 12]>
+  2 M8    1433E-YWHAE-YWHAE laevisForeground <tibble [2 × 12]>
+  3 M8    1433E-YWHAE-YWHAE tigerForeground  <tibble [2 × 12]>
+  ...
+  
+  $nested_list$ModelA
+  # A tibble: 9 x 4
+    model  gene              tree             data            
+    <chr>  <chr>             <chr>            <list>          
+  1 ModelA 1433E-YWHAE-YWHAE brownForeground  <tibble [3 × 5]>
+  2 ModelA 1433E-YWHAE-YWHAE laevisForeground <tibble [3 × 5]>
+  3 ModelA 1433E-YWHAE-YWHAE tigerForeground  <tibble [3 × 5]>
+  ...
+```
 
 **goFisher()**
 
