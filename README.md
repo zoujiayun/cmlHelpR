@@ -347,8 +347,6 @@ This function parses the `dN/dS` values for site classes. Not every model provid
 Input for this function is simply the directory path to where the `CODEML` output directory is, a vector of models and the extension of the output files (defaults to `.out`).
 
 ```
-library(cmlHelpR)
-
 getPW(dir_path = "path/to/codeml_out", 
       models = c("ModelA", "M1a", "M8"), 
       ext = ".custom.out")
