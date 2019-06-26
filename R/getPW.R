@@ -7,7 +7,7 @@
 #' @keywords parse
 #' @export
 #' @examples
-#' parse_PW(parse_PW = "path/to/codeml_out")
+#' parse_PW(parse_PW = "path/to/codeml_out", models = c("ModelA", "M1a", "M8"), ext = ".custom.out")
 getPW <- function(dir_path, models, ext=".out") {
 
   ## Models that have p/w rows in some form
@@ -17,7 +17,7 @@ getPW <- function(dir_path, models, ext=".out") {
   g1 <- c("CmC", "CmD")
   g2 <- c("M1a", "M2a", "M2a_Rel", "M3")
   g3 <- c("M8")
-  # g4 <- c("ModelA", "ModelA1")
+  g4 <- c("ModelA", "ModelA1")
 
   ## Check if all provided models match list above
   if(!all(is.element(models, m))){
@@ -130,7 +130,7 @@ getPW <- function(dir_path, models, ext=".out") {
 
       return(ret)
 
-    } else {
+    } else if(any(stringr::str_detect(string = y, pattern = g4))) {
 
       ret <- purrr::map(f[[y]], ~{
 
@@ -167,6 +167,8 @@ getPW <- function(dir_path, models, ext=".out") {
 
       return(ret)
 
+    } else {
+      stop(call. = TRUE, "Shouldn't get here... Something has gone seriously wrong")
     }
 
   })
