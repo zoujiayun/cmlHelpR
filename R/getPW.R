@@ -7,7 +7,7 @@
 #' @keywords parse
 #' @export
 #' @examples
-#' parse_PW(parse_PW = "path/to/codeml_out", models = c("ModelA", "M1a", "M8"), ext = ".custom.out")
+#' getPW(dir_path = "path/to/codeml_out", models = c("ModelA", "M1a", "M8"), ext = ".custom.out")
 getPW <- function(dir_path, models, ext=".out") {
 
   ## Models that have p/w rows in some form
