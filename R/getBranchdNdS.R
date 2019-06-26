@@ -3,11 +3,13 @@
 #' Given a list of files, this function will parse the branch dN/dS value from the
 #' CODEML output. It returns a list and nested dataframe object of dN/dS values for each file.
 #' @param directory_path Vector of file names with path
+#' @param models Models to get branch dN/dS values for
+#' @param ext Extension of CODEML output files
 #' @keywords helper
 #' @export
 #' @examples
 #' getBranchdNdS(directory_path = list.files(path = "path/to/codeml/outDir", models = c("M1a", "M8")))
-getBranchDNDS <- function(directory_path, models) {
+getBranchDNDS <- function(directory_path, models, ext = ".out") {
 
   ## Check: do the models provided match all contain branch dN/dS values
   g <- c("FreeRatio" ,"M0" ,"M1a" ,"M2a_Rel" ,"M3" ,"M7" ,"M8" , "TwoRatio")
@@ -21,9 +23,9 @@ getBranchDNDS <- function(directory_path, models) {
   d <- d[stringr::str_detect(string = d, pattern = m)]
 
   ## Listing files + reading them in
-  f <- purrr::map(d, list.files, pattern = ".out", full.names = TRUE)
+  f <- purrr::map(d, list.files, pattern = ext, full.names = TRUE)
   f <- unlist(x = f)
-  f <- magrittr::set_names(x = f, value = stringr::str_remove(string = sub(".*/(.*)/(.*)$", "\\1_\\2", f), pattern = ".out"))
+  f <- magrittr::set_names(x = f, value = stringr::str_remove(string = sub(".*/(.*)/(.*)$", "\\1_\\2", f), pattern = ext))
   f <- purrr::map(f, readr::read_lines)
 
   ## Iterate through each file and get values

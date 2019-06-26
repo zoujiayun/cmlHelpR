@@ -2,13 +2,13 @@
 #'
 #' General run down of what it does
 #' @param dir_path Path to codeml_parallel output directory.
-#' @param models A list of models to use in the LRT calculations
 #' @param lst_comparisons Combinations/comparisons of the above models
+#' @param ext Extension of CODEML output files
 #' @keywords Likelihood ratio test, LRT
 #' @export
 #' @examples
 #' lrt_statistic(dir_path = "path/to/codeml_out", models = c("M1a", "M2a"), lst_comparisons = c("M1a", "M2a"))
-lrtStatistic <- function(dir_path, lst_comparisons) {
+lrtStatistic <- function(dir_path, lst_comparisons, ext = ".out") {
 
   ## Models
   m <- unlist(lst_comparisons)
@@ -25,8 +25,8 @@ lrtStatistic <- function(dir_path, lst_comparisons) {
   ## Reading codeml output files
   print("Reading output")
   f <- purrr::map(d, ~{
-    fl <- list.files(path = .x, pattern = ".out", full.names = TRUE)
-    fl <- magrittr::set_names(x = fl, value = sub(".out", "", basename(fl)))
+    fl <- list.files(path = .x, pattern = ext, full.names = TRUE)
+    fl <- magrittr::set_names(x = fl, value = sub(ext, "", basename(fl)))
     fl <- purrr::map(fl, readr::read_lines)
   })
 
