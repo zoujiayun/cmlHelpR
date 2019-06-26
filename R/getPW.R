@@ -175,26 +175,28 @@ getPW <- function(dir_path, models, ext=".out") {
   names(lst) <- names(f)
 
   ## Formatting output
-  out <- purrr::map(lst, dplyr::bind_rows, .id = "model_gene_tree")
+  lst <- purrr::map(lst, dplyr::bind_rows, .id = "model_gene_tree")
 
   ## Need to do this if M2a_Rel is included - underscore stuffs up seperators
-  out <- purrr::map(names(out), ~{
+  nest <- purrr::map(names(lst), ~{
     if(.x == "M2a_Rel"){
 
-      t <- tidyr::separate(data = out[[.x]], col = "model_gene_tree", into = c("model", "gene", "tree"), sep = "_", extra = "merge")
+      t <- tidyr::separate(data = lst[[.x]], col = "model_gene_tree", into = c("model", "gene", "tree"), sep = "_", extra = "merge")
       t <- tidyr::unite(t, col = model, model, gene)
       t <- tidyr::separate(data = t, col = "tree", into = c("gene", "tree"), sep = "_")
       return(t)
 
     } else {
-      tidyr::separate(data = out[[.x]], col = "model_gene_tree", into = c("model", "gene", "tree"), sep = "_")
+      tidyr::separate(data = lst[[.x]], col = "model_gene_tree", into = c("model", "gene", "tree"), sep = "_")
     }
   })
-  names(out) <- names(f)
+  names(nest) <- names(f)
 
   ## Group and nest for easy access
-  out <- purrr::map(out, dplyr::group_by, model, gene, tree)
-  out <- purrr::map(out, tidyr::nest)
+  nest <- purrr::map(nest, dplyr::group_by, model, gene, tree)
+  nest <- purrr::map(nest, tidyr::nest)
+
+  out <- list(long_list = lst, nested_list = nest)
   return(out)
 
 }
