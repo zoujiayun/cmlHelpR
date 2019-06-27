@@ -407,7 +407,82 @@ $nested_list
 
 ## Function: goFisher()
 
-Need to update.
+This is a function I've written that conducts a fishers test on a GO term for a group of genes, identifying if a specific GO term is enriched in the set or not. **This function is very much custom to this analysis pipeline!** The inputs are built in a specific way, meaning if you can replicate the inputs, you're good to go. Otherwise, it may be easier to use another GO analysis tool.
+
+**Usage**
+
+The function takes three inputs, two of which you will need to build yourself. 
+
+The first is a mapping of the gene to go term. Genes can have multiple GO terms associated with them, so this data structure has a column indicating what number GO id it is for a gene. Below is an example of the table:
+
+```
+# A tibble: 7,620 x 3
+   gene                      n_GOIDs GO_ID     
+   <chr>                     <chr>   <chr>     
+ 1 1433E-YWHAE-YWHAE         GO:1    GO:0019904
+ 2 1433T-YWHAQ-YWHAQ         GO:1    GO:0019904
+ 3 1433Z-YWHAZ-YWHAZ         GO:1    GO:0019904
+ 4 2A5D-PPP2R5D-PPP2R5D      GO:1    GO:0000159
+ 5 2A5D-PPP2R5D-PPP2R5D      GO:2    GO:0007165
+ 6 2A5D-PPP2R5D-PPP2R5D      GO:3    GO:0019888
+ 7 2AAA-PPP2R1A-PPP2R1A      GO:1    GO:0019888
+ 8 2AAA-PPP2R1A-PPP2R1A      GO:2    GO:0065003
+ 9 2AAA-PPP2R1A-PPP2R1A      GO:3    GO:0005515
+10 2ABA-PPP2R2A-LOC113445617 GO:1    GO:0000159
+# … with 7,610 more rows
+```
+
+In the example above, the `gene` column is self explanatory, the `n_GOIDs` represents what number GO id it is for a gene, while `GO_ID` is the GO term. In the example, gene `2A5D-PPP2R5D-PPP2R5D` has 3 different go terms assocaited with it.
+
+The second input is a long-format dataframe listing the genes that have at least one site under selection and which "group" they belong to. In this case, the group is the model and tree combination that the gene appeared in. So long as you've got some grouping variable for your data, you should be good to go. Below is an example:
+
+```
+# A tibble: 13,907 x 2
+   gene                            cluster               
+   <chr>                           <chr>                 
+ 1 1433T-YWHAQ-YWHAQ               M2a-brownForeground-80
+ 2 2A5D-PPP2R5D-PPP2R5D            M2a-brownForeground-80
+ 3 5NTC-NT5C2-NT5C2                M2a-brownForeground-80
+ 4 A4GCT-A4GNT-A4GNT               M2a-brownForeground-80
+ 5 AAPK2-PRKAA2-PRKAA2             M2a-brownForeground-80
+ 6 AASD1-LOC113425478-LOC113449799 M2a-brownForeground-80
+ 7 AATC-GOT1-GOT1                  M2a-brownForeground-80
+ 8 ABD18-ABHD18-ABHD18             M2a-brownForeground-80
+ 9 ACADM-ACADM-ACADM               M2a-brownForeground-80
+10 ACDSB-ACADSB-ACADSB             M2a-brownForeground-80
+# … with 13,897 more rows
+```
+
+The last input is the statistical correction you want to apply. I've simply used the base package `p.adjust` function to do this, so choose any of the valid parameters for that function.
+
+The function is then executed like so:
+
+```
+out <- goFisher(gene_GOID_mapping = g2g, 
+                gene_cluster_mapping = gws, 
+                pAdj_method = "bonferroni")
+```
+
+**Output**
+
+The output is a dataframe shown below. The statistics associated with a GO term belonging to a specific cluster (condition) is reported. The raw p-value and adjusted p-values are given, along with the confidence intervals and odds-ratio for the Fisher's exact test. The values used in the 2x2 contingency table are stored in the `data` column, while the Fisher statistic is stored in the column titled `fisher`.
+
+```
+# A tibble: 10,360 x 9
+   cluster                GO_ID         pVal  adjP conf_low conf_high      OR data             fisher 
+   <chr>                  <chr>        <dbl> <dbl>    <dbl>     <dbl>   <dbl> <list>           <list> 
+ 1 M2a-brownForeground-80 GO:0045087 0.00210 0.970  2.29      1135.    23.2   <tibble [1 × 4]> <htest>
+ 2 M2a-brownForeground-80 GO:0000015 0.148   1      0.147      Inf    Inf     <tibble [1 × 4]> <htest>
+ 3 M2a-brownForeground-80 GO:0000077 0.161   1      0.320       33.6    3.84  <tibble [1 × 4]> <htest>
+ 4 M2a-brownForeground-80 GO:0000079 0.274   1      0.0732     451.     5.76  <tibble [1 × 4]> <htest>
+ 5 M2a-brownForeground-80 GO:0000122 0.0592  1      0.599      678.    11.5   <tibble [1 × 4]> <htest>
+ 6 M2a-brownForeground-80 GO:0000124 0.148   1      0.147      Inf    Inf     <tibble [1 × 4]> <htest>
+ 7 M2a-brownForeground-80 GO:0000127 0.148   1      0.147      Inf    Inf     <tibble [1 × 4]> <htest>
+ 8 M2a-brownForeground-80 GO:0000139 1       1      0.0243      10.3    1.15  <tibble [1 × 4]> <htest>
+ 9 M2a-brownForeground-80 GO:0000159 0.274   1      0.0732     451.     5.76  <tibble [1 × 4]> <htest>
+10 M2a-brownForeground-80 GO:0000166 0.501   1      0.00805      2.16   0.337 <tibble [1 × 4]> <htest>
+# … with 10,350 more rows
+```
 
 ## Author 
 
