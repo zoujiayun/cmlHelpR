@@ -1,64 +1,74 @@
 #' Conduct Gene Ontology within gene clusters using Fisher Test
 #'
 #' Conducts a Fisher's Exact Test on all GO terms within a gene cluster.
-#' @param df_clusters Data frame that contains
-#' @param pAdj_method
+#' @param gene_2_go Dataframe that contains two columns. Column 1 is gene ID and column 2 is GO terms associated with that gene ID.
+#' @param gene_2_group Long form dataframe mapping which group a gene belongs to. Genes can appear multiple times belonging to different groups.
+#' Column 1 should be the gene ID and column two is the grouping variable.
+#' @param pAdj_method P-value adjustment method. Takes any value from the 'p.adjust()' function.
 #' @keywords helper
 #' @export
 #' @examples
-#' goFisher(df_clusters = df.clusters.goTerms, pAdj_method = "bonferroni")
-goFisher <- function(gene_GOID_mapping, gene_cluster_mapping, pAdj_method){
+#' goFisher(gene_2_go = df.genes2go, gene_2_group = df.genes2group ,pAdj_method = "bonferroni")
+goFisher <- function(gene_2_go, gene_2_group, pAdj_method){
 
-  ## Total number of genes assessed (excluding those with internal stop codons)
-  nGenes_total <- length(unique(gene_GOID_mapping[["gene"]]))
+  ## Improvement: Join both inputs into one dataframe that is then parsed. Should
+  ## save on a few of the left joins later on in the code.
 
-  ## Total frequency of GO terms
-  nGO_total <- dplyr::group_by(.data = gene_GOID_mapping, GO_ID)
+  ## Total number of genes in analysis
+  nGenes_total <- length(unique(gene_2_go[[1]]))
+
+  ## Frequency of GO term in total set
+  nGO_total <- dplyr::group_by_at(.tbl = gene_2_go, 2) ## Grouping by GO ids
   nGO_total <- dplyr::summarise(.data = nGO_total, nGO_total = dplyr::n())
 
-  ## Number of unique genes in each CONDITION
-  df.nGenes.cluster <- dplyr::tally(dplyr::group_by(.data = gene_cluster_mapping, cluster), name = "nGene_cluster")
+  ## Number of unique genes in each GROUP
+  df_nGenes_group <- dplyr::tally(dplyr::group_by_at(.tbl = gene_2_group, 2), name = "nGene_group")
+  df_nGenes_group <- dplyr::rename(.data = df_nGenes_group, group = 1)
 
   ## Frequency of GO term WITHIN CONDITION
-  df.cluster.go <- tidyr::nest(data = dplyr::group_by(.data = gene_cluster_mapping, cluster), .key = "genes_in_condition")
-  df.cluster.go <- dplyr::mutate(.data = df.cluster.go,
-                                 genes_cluster_GOID = purrr::map(genes_in_condition, ~{
-                                   t <- dplyr::left_join(x = .x, gene_GOID_mapping)
-                                   t <- dplyr::group_by(.data = t, GO_ID)
-                                   t <- dplyr::tally(x = t, name = "inClust_nGene_inGO")
+  df_cluster_go <- tidyr::nest(data = dplyr::group_by_at(.tbl = gene_2_group, 2), .key = "genes_in_condition") ## Genes in group
+  df_cluster_go <- dplyr::mutate(.data = df_cluster_go,
+                                 genes_cluster_GOID = purrr::map(genes_in_condition, ~{     ## Iterate over genes in each condition
+                                   t <- dplyr::left_join(x = .x, gene_2_go)                 ## Getting GO terms for each gene in group
+                                   t <- dplyr::group_by_at(.tbl = t, 2)                     ## Grouping data by GO term
+                                   t <- dplyr::tally(x = t, name = "inClust_nGene_withGO")    ## Frequency of GO term within grouping - More terms than genes as genes can have MULTIPLE GO terms associated with it
                                  }))
 
-  df.cluster.go <- magrittr::set_names(x = df.cluster.go[["genes_cluster_GOID"]], value = df.cluster.go[["cluster"]])
-  df.cluster.go <- dplyr::bind_rows(df.cluster.go, .id = "cluster")
+  df_cluster_go <- magrittr::set_names(x = df_cluster_go[["genes_cluster_GOID"]],
+                                       value = df_cluster_go[[1]])                  ## Extracting frequency table for each group as list - naming list
+  df_cluster_go <- dplyr::bind_rows(df_cluster_go, .id = "group")                   ## Binding each groups frequency table - using list names in group
 
   ## Joining all information together
-  df.build.from <- dplyr::left_join(x = df.nGenes.cluster, df.cluster.go)
-  df.build.from <- dplyr::left_join(x = df.build.from, nGO_total)
-  df.build.from <- dplyr::mutate(.data = df.build.from,
-                                 nGene_remain = nGenes_total - nGene_cluster,
-                                 outClust_nGene_inGO = nGO_total - inClust_nGene_inGO,
-                                 inClust_nGene_outGO = nGene_cluster - inClust_nGene_inGO,
-                                 outClust_nGene_outGO = nGene_remain - outClust_nGene_inGO)
-  df.build.from <- tidyr::drop_na(data = df.build.from)
-  df.build.from <- dplyr::select(df.build.from,
-                                 cluster, GO_ID, -nGene_cluster,
-                                 inClust_nGene_inGO, outClust_nGene_inGO,
+  df_build_from <- dplyr::left_join(x = df_nGenes_group, df_cluster_go)
+  df_build_from <- dplyr::left_join(x = df_build_from, nGO_total)
+
+  ## Dealing with doubling up: Subtracting gene in group from total
+  df_build_from <- dplyr::mutate(.data = df_build_from,                                        ## Subtracting gene groupings from total
+                                 nGene_remain = nGenes_total - nGene_group,                    ## This should remove the genes in the group from the total
+                                 outClust_nGene_withGO = nGO_total - inClust_nGene_withGO,     ## meaning we're not doubling up on genes in the group AND
+                                 inClust_nGene_outGO = nGene_group - inClust_nGene_withGO,     ## in the total.
+                                 outClust_nGene_outGO = nGene_remain - outClust_nGene_withGO)
+  df_build_from <- tidyr::drop_na(data = df_build_from)                                        ## Don't care about NA as this represents no GO term
+  df_build_from <- dplyr::select(df_build_from,
+                                 c(1,3), -nGene_group,
+                                 inClust_nGene_withGO, outClust_nGene_withGO,
                                  inClust_nGene_outGO, outClust_nGene_outGO)
 
   ## Fishers Exact Test
-  out <- dplyr::group_by(.data = df.build.from, cluster, GO_ID)
+  out <- dplyr::group_by_at(.tbl = df_build_from, c(1,2))
   out <- tidyr::nest(data = out)
   out <- dplyr::mutate(.data = out,
-                       fisher = purrr::map(.x = data, ~{fisher.test(x = matrix(data = unlist(.x), nrow = 2), alternative = "two.sided")}),
-                       pVal = unlist(purrr::map(fisher, ~{.x["p.value"]})),
-                       conf_low = unlist(purrr::map(fisher, ~{.x[["conf.int"]][1]})),
+                       fisher = purrr::map(.x = data, ~{fisher.test(x = matrix(data = unlist(.x), nrow = 2), alternative = "two.sided")}),  ## Fisher test
+                       pVal = unlist(purrr::map(fisher, ~{.x["p.value"]})),                                                                 ## Extracting p-value
+                       conf_low = unlist(purrr::map(fisher, ~{.x[["conf.int"]][1]})),                                                       ## Confidence intervals
                        conf_high = unlist(purrr::map(fisher, ~{.x[["conf.int"]][2]})),
-                       OR = unlist(purrr::map(fisher, ~{.x["estimate"]}))
-  )
-  out <- dplyr::group_by(.data = out, cluster)
-  out <- dplyr::mutate(.data = out, adjP = p.adjust(p = pVal, method = pAdj_method))
-  out <- dplyr::select(out, cluster, GO_ID, pVal, adjP, conf_low, conf_high, OR, dplyr::everything())
-  out <- dplyr::arrange(out, cluster, adjP)
+                       OR = unlist(purrr::map(fisher, ~{.x["estimate"]})))                                                                  ## Odds ratio
+
+  ## Statistical correction
+  out <- dplyr::group_by(.data = out, group)            ## Grouping to limit correction to group - not to all samples
+  out <- dplyr::mutate(.data = out, adjP = p.adjust(p = pVal, method = pAdj_method))  ## Correcting using p.adjust
+  out <- dplyr::select(out, 1, 2, 5, 9, 6, 7, 8, dplyr::everything())     ## Arrange columns
+  out <- dplyr::arrange(.data = out, group, adjP)                         ## Sort by group and adjusted-p
   out <- dplyr::ungroup(out)
 
   return(out)
