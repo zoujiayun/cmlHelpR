@@ -413,22 +413,22 @@ This is a function I've written that conducts a fishers test on a GO term for a 
 
 The function takes three inputs, two of which you will need to build yourself. 
 
-The first is a mapping of the gene to go term. Genes can have multiple GO terms associated with them, so this data structure has a column indicating what number GO id it is for a gene. Below is an example of the table:
+The first is a mapping of the gene to go term. Below is an example of what the table should look like, where the first column is the gene identifier and the second is the go term(s) associated to that gene.
 
 ```
-# A tibble: 7,620 x 3
-   gene                      n_GOIDs GO_ID     
-   <chr>                     <chr>   <chr>     
- 1 1433E-YWHAE-YWHAE         GO:1    GO:0019904
- 2 1433T-YWHAQ-YWHAQ         GO:1    GO:0019904
- 3 1433Z-YWHAZ-YWHAZ         GO:1    GO:0019904
- 4 2A5D-PPP2R5D-PPP2R5D      GO:1    GO:0000159
- 5 2A5D-PPP2R5D-PPP2R5D      GO:2    GO:0007165
- 6 2A5D-PPP2R5D-PPP2R5D      GO:3    GO:0019888
- 7 2AAA-PPP2R1A-PPP2R1A      GO:1    GO:0019888
- 8 2AAA-PPP2R1A-PPP2R1A      GO:2    GO:0065003
- 9 2AAA-PPP2R1A-PPP2R1A      GO:3    GO:0005515
-10 2ABA-PPP2R2A-LOC113445617 GO:1    GO:0000159
+# A tibble: 7,620 x 2
+   gene                      GO_ID     
+   <chr>                     <chr>     
+ 1 1433E-YWHAE-YWHAE         GO:0019904
+ 2 1433T-YWHAQ-YWHAQ         GO:0019904
+ 3 1433Z-YWHAZ-YWHAZ         GO:0019904
+ 4 2A5D-PPP2R5D-PPP2R5D      GO:0000159
+ 5 2A5D-PPP2R5D-PPP2R5D      GO:0007165
+ 6 2A5D-PPP2R5D-PPP2R5D      GO:0019888
+ 7 2AAA-PPP2R1A-PPP2R1A      GO:0019888
+ 8 2AAA-PPP2R1A-PPP2R1A      GO:0065003
+ 9 2AAA-PPP2R1A-PPP2R1A      GO:0005515
+10 2ABA-PPP2R2A-LOC113445617 GO:0000159
 # … with 7,610 more rows
 ```
 
