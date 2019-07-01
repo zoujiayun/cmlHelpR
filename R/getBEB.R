@@ -57,6 +57,7 @@ getBEB <- function(dir_path, models, cores = 1, ext = ".out") {
   beb <- magrittr::set_names(x = beb, value = names(f))
   beb <- dplyr::bind_rows(beb, .id = "model")
   beb <- tidyr::separate(data = beb, col = id, into = c("gene", "tree"), sep = "_")
+  beb <- dplyr::mutate(.data = beb, tree = stringr::str_replace_na(string = tree, replacement = "base"))
 
   print("Getting no-gap-length value")
   alnLength <- purrr::map(f[[1]], ~{
@@ -70,9 +71,8 @@ getBEB <- function(dir_path, models, cores = 1, ext = ".out") {
 
   })
 
-  alnLength <- dplyr::bind_rows(alnLength, .id = "condition")
-  alnLength <- dplyr::mutate(.data = alnLength, condition = sub("_.*", "", condition))
-  alnLength <- dplyr::rename(.data = alnLength, gene = condition)
+  alnLength <- dplyr::bind_rows(alnLength, .id = "gene")
+  alnLength <- dplyr::mutate(.data = alnLength, condition = sub("_.*", "", gene))
   # alnLength <- tidyr::separate(data = alnLength, col = condition, into = c("gene", "tree"), sep = "_")
 
   beb <- dplyr::left_join(beb, alnLength)
