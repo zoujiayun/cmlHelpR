@@ -6,6 +6,14 @@ The functions are continually being tweaked, and in many instances serve a speci
 
 In the sections below I'll demonstrate some use cases of the major functions of interest.
 
+# In development
+
+- Need to update functions to work with new null/site model approach
+  - parseBEB
+  - beb2freq
+  - getPw
+  - getBranchdNdS
+
 # Installation
 In the `R-studio` console, execute the following code.
 
