@@ -30,7 +30,7 @@ beb2freq <- function(df_beb, only_signif = NULL, max_freq = NULL) {
                             !! .x := Freq)
   })
 
-  df.freq <- purrr::reduce(lst.freq, full_join)
+  df.freq <- purrr::reduce(lst.freq, dplyr::full_join)
   df.freq <- replace(df.freq, is.na(df.freq), 0)
 
   ## Filter by maximum value
