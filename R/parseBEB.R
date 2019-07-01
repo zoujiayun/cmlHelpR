@@ -8,8 +8,8 @@
 #' @keywords Bayes, empiracle, Bayes, parse
 #' @export
 #' @examples
-#' parse_BEB(dir_path = "path/to/parent_out", models = c("M2a", "M8", "ModelA"), out_path = "path/to/output/name.tsv", cores = 4)
-parseBEB <- function(dir_path, models, cores = 1, ext = ".out") {
+#' getBEB(dir_path = "path/to/parent_out", models = c("M2a", "M8", "ModelA"), cores = 4, ext = ".customOut")
+getBEB <- function(dir_path, models, cores = 1, ext = ".out") {
 
   ## Models with BEB output
   m <- c("M2a", "M8", "ModelA")
