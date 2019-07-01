@@ -14,6 +14,6 @@
     return(out)
   })
 
-  dplyr::bind_rows(lst, .id = "gene_tree")
+  dplyr::bind_rows(lst, .id = "id")
 
 }
