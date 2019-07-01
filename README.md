@@ -208,58 +208,44 @@ The output is a list object housing a list split by model and a nested dataframe
 
 ```
 $long
-   # A tibble: 62,594 x 11
-   model gene              tree               pos aa       val   pval signif postMean    SE no_gap_length
-   <chr> <chr>             <chr>            <dbl> <chr>  <dbl>  <dbl> <chr>     <dbl> <dbl>         <dbl>
-    1 M2a   1433E-YWHAE-YWHAE brownForeground     NA NA    NA     NA     NA        NA    NA              765
-    2 M2a   1433E-YWHAE-YWHAE laevisForeground    NA NA    NA     NA     NA        NA    NA              765
-    3 M2a   1433E-YWHAE-YWHAE tigerForeground     NA NA    NA     NA     NA        NA    NA              765
-    4 M2a   1433T-YWHAQ-YWHAQ brownForeground    227 E      0.991  0.009 **         9.63  1.37           735
-    5 M2a   1433T-YWHAQ-YWHAQ brownForeground    228 Y      0.978  0.022 *          9.51  1.69           735
-    6 M2a   1433T-YWHAQ-YWHAQ brownForeground    229 G      0.973  0.027 *          9.47  1.79           735
-    7 M2a   1433T-YWHAQ-YWHAQ brownForeground    230 F      0.941  0.059 NA         9.19  2.37           735
-    8 M2a   1433T-YWHAQ-YWHAQ brownForeground    231 I      0.967  0.033 *          9.42  1.91           735
-    9 M2a   1433T-YWHAQ-YWHAQ brownForeground    232 I      0.854  0.146 NA         8.40  3.39           735
-   10 M2a   1433T-YWHAQ-YWHAQ laevisForeground   227 E      0.991  0.009 **         9.63  1.37           735
+# A tibble: 5 x 12
+  model  gene           tree               pos aa      val postMean plusMinus    SE signif  pval no_gap_length
+  <chr>  <chr>          <chr>            <dbl> <chr> <dbl>    <dbl> <chr>     <dbl> <chr>  <dbl>         <dbl>
+1 M2a    RHOA-RHOA-RHOA NA                  NA NA    NA       NA    NA        NA    NA     NA              579
+2 M8     RHOA-RHOA-RHOA NA                 141 S      0.61     2.82 +-         2.75 NA      0.39           579
+3 ModelA RHOA-RHOA-RHOA brownForeground     NA NA    NA       NA    NA        NA    NA     NA              579
+4 ModelA RHOA-RHOA-RHOA laevisForeground    NA NA    NA       NA    NA        NA    NA     NA              579
+5 ModelA RHOA-RHOA-RHOA tigerForeground     NA NA    NA       NA    NA        NA    NA     NA              579
+
 $list
-   $list$M2a
-   # A tibble: 23,967 x 11
-      model gene              tree               pos aa       val   pval signif postMean    SE no_gap_length
-      <chr> <chr>             <chr>            <dbl> <chr>  <dbl>  <dbl> <chr>     <dbl> <dbl>         <dbl>
-    1 M2a   1433E-YWHAE-YWHAE brownForeground     NA NA    NA     NA     NA        NA    NA              765
-    2 M2a   1433E-YWHAE-YWHAE laevisForeground    NA NA    NA     NA     NA        NA    NA              765
-    3 M2a   1433E-YWHAE-YWHAE tigerForeground     NA NA    NA     NA     NA        NA    NA              765
-    4 M2a   1433T-YWHAQ-YWHAQ brownForeground    227 E      0.991  0.009 **         9.63  1.37           735
-    5 M2a   1433T-YWHAQ-YWHAQ brownForeground    228 Y      0.978  0.022 *          9.51  1.69           735
-    6 M2a   1433T-YWHAQ-YWHAQ brownForeground    229 G      0.973  0.027 *          9.47  1.79           735
-    7 M2a   1433T-YWHAQ-YWHAQ brownForeground    230 F      0.941  0.059 NA         9.19  2.37           735
-    8 M2a   1433T-YWHAQ-YWHAQ brownForeground    231 I      0.967  0.033 *          9.42  1.91           735
-    9 M2a   1433T-YWHAQ-YWHAQ brownForeground    232 I      0.854  0.146 NA         8.40  3.39           735
-   10 M2a   1433T-YWHAQ-YWHAQ laevisForeground   227 E      0.991  0.009 **         9.63  1.37           735
-   # … with 23,957 more rows
+$list$M2a
+# A tibble: 1 x 12
+  model gene           tree    pos aa      val postMean plusMinus    SE signif  pval no_gap_length
+  <chr> <chr>          <chr> <dbl> <chr> <dbl>    <dbl> <chr>     <dbl> <chr>  <dbl>         <dbl>
+1 M2a   RHOA-RHOA-RHOA NA       NA NA       NA       NA NA           NA NA        NA           579
+
+$list$M8
+# A tibble: 1 x 12
+  model gene           tree    pos aa      val postMean plusMinus    SE signif  pval no_gap_length
+  <chr> <chr>          <chr> <dbl> <chr> <dbl>    <dbl> <chr>     <dbl> <chr>  <dbl>         <dbl>
+1 M8    RHOA-RHOA-RHOA NA      141 S      0.61     2.82 +-         2.75 NA      0.39           579
 
 $list$ModelA
-   # A tibble: 38,627 x 11
-      model  gene              tree               pos aa       val    pval signif postMean    SE no_gap_length
-      <chr>  <chr>             <chr>            <dbl> <chr>  <dbl>   <dbl> <chr>     <dbl> <dbl>         <dbl>
-    1 ModelA 1433E-YWHAE-YWHAE brownForeground     NA NA    NA     NA      NA           NA    NA           765
-    2 ModelA 1433E-YWHAE-YWHAE laevisForeground    NA NA    NA     NA      NA           NA    NA           765
-    3 ModelA 1433E-YWHAE-YWHAE tigerForeground     NA NA    NA     NA      NA           NA    NA           765
-    4 ModelA 1433T-YWHAQ-YWHAQ brownForeground     NA NA    NA     NA      NA           NA    NA           735
-    5 ModelA 1433T-YWHAQ-YWHAQ laevisForeground   227 E      0.995  0.005  **           NA    NA           735
-    6 ModelA 1433T-YWHAQ-YWHAQ laevisForeground   228 Y      0.987  0.013  *            NA    NA           735
-    7 ModelA 1433T-YWHAQ-YWHAQ laevisForeground   229 G      0.986  0.014  *            NA    NA           735
-    8 ModelA 1433T-YWHAQ-YWHAQ laevisForeground   230 F      0.97   0.03   *            NA    NA           735
-    9 ModelA 1433T-YWHAQ-YWHAQ laevisForeground   231 I      0.985  0.015  *            NA    NA           735
-   10 ModelA 1433T-YWHAQ-YWHAQ laevisForeground   232 I      0.909  0.0910 NA           NA    NA           735
-   # … with 38,617 more rows
+# A tibble: 3 x 12
+  model  gene           tree               pos aa      val postMean plusMinus    SE signif  pval no_gap_length
+  <chr>  <chr>          <chr>            <dbl> <chr> <dbl>    <dbl> <chr>     <dbl> <chr>  <dbl>         <dbl>
+1 ModelA RHOA-RHOA-RHOA brownForeground     NA NA       NA       NA NA           NA NA        NA           579
+2 ModelA RHOA-RHOA-RHOA laevisForeground    NA NA       NA       NA NA           NA NA        NA           579
+3 ModelA RHOA-RHOA-RHOA tigerForeground     NA NA       NA       NA NA           NA NA        NA           579
+
 
 $nested
-# A tibble: 2 x 2
-  model  BEB                   
-  <chr>  <list>                
-1 M2a    <tibble [23,967 × 10]>
-2 ModelA <tibble [38,627 × 10]>
+# A tibble: 3 x 2
+  model  BEB              
+  <chr>  <list>           
+1 M2a    <tibble [1 × 11]>
+2 M8     <tibble [1 × 11]>
+3 ModelA <tibble [3 × 11]>
 ```
 
 ## Function: beb2freq()
