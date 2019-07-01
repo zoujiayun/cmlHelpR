@@ -152,22 +152,38 @@ The input for this command is a list of model comparisons and the file path to t
 
 **Output**:
 
-The output is a list of dataframes, where each data frame corresponds to each model comparison.
+The output is a list of dataframes, where each data frame corresponds to each model comparison. Due to the nature of how Null/Site models are run compared to branch/branch-site/clade models, the outputs will look slightly different depending on the model comparison.
+
+In the example below I've given an example of three different model comparison combinations.
+
+- M2a - M1a == site vs site comparison
+- ModelA1 - M1a == Branch-site vs site
+- CmC - M2a_Rel == Clade vs clade
+
+The main take away is that the site vs site comparison has no tree field. This is because a single tree representing the relationship between all samples is used for each site model. Therefore there are no tree replicates, meaning no tree field.
 
 ```
-$M2a_M1a
-# A tibble: 9 x 9
-  gene              tree             np_M1a np_M2a lnL_M1a lnL_M2a      delta    df         pval
-  <chr>             <chr>             <dbl>  <dbl>   <dbl>   <dbl>      <dbl> <dbl>        <dbl>
-1 1433E-YWHAE-YWHAE brownForeground       7      9  -1026.  -1026.  0.0000660     2        1.000       
-2 1433E-YWHAE-YWHAE laevisForeground      7      9  -1026.  -1026.  0.0000660     2        1.000       
-3 1433E-YWHAE-YWHAE tigerForeground       7      9  -1026.  -1026.  0.0000660     2        1.000       
-4 1433T-YWHAQ-YWHAQ brownForeground       7      9  -1024.  -1006.  35.7          2        0.0000000179
-5 1433T-YWHAQ-YWHAQ laevisForeground      7      9  -1024.  -1006.  35.7          2        0.0000000179
-6 1433T-YWHAQ-YWHAQ tigerForeground       7      9  -1024.  -1006.  35.7          2        0.0000000179
-7 1433Z-YWHAZ-YWHAZ brownForeground       7      9   -967.   -967.  0.0000340     2        1.000       
-8 1433Z-YWHAZ-YWHAZ laevisForeground      7      9   -967.   -967.  0.0000340     2        1.000       
-9 1433Z-YWHAZ-YWHAZ tigerForeground       7      9   -967.   -967.  0.0000340     2        1.000
+$`M2a-M1a`
+# A tibble: 1 x 8
+  id             np_M1a np_M2a lnL_M1a lnL_M2a delta degFree  pval
+  <chr>           <dbl>  <dbl>   <dbl>   <dbl> <dbl>   <dbl> <dbl>
+1 RHOA-RHOA-RHOA      7      9   -780.   -780. 0.249       2 0.883
+
+$`ModelA1-M1a`
+# A tibble: 3 x 9
+  gene           tree             np_ModelA1 np_M1a lnL_ModelA1 lnL_M1a      delta degFree  pval
+  <chr>          <chr>                 <dbl>  <dbl>       <dbl>   <dbl>      <dbl>   <dbl> <dbl>
+1 RHOA-RHOA-RHOA brownForeground           8      7       -780.   -780. 0.00000200       1 0.999
+2 RHOA-RHOA-RHOA laevisForeground          8      7       -780.   -780. 0                1 1    
+3 RHOA-RHOA-RHOA tigerForeground           8      7       -780.   -780. 0.00000400       1 0.998
+
+$`CmC-M2a_Rel`
+# A tibble: 3 x 9
+  gene           tree             np_CmC np_M2a_Rel lnL_CmC lnL_M2a_Rel delta degFree  pval
+  <chr>          <chr>             <dbl>      <dbl>   <dbl>       <dbl> <dbl>   <dbl> <dbl>
+1 RHOA-RHOA-RHOA brownForeground      10          9   -780.       -780.     0       1     1
+2 RHOA-RHOA-RHOA laevisForeground     10          9   -780.       -780.     0       1     1
+3 RHOA-RHOA-RHOA tigerForeground      10          9   -780.       -780.     0       1     1
 ```
 
 ## Function: parseBEB()
