@@ -6,7 +6,7 @@
 #' @keywords internal
 .parse_m2a_M8 <- function(lines, c) {
 
-  obj <- lapply(lines, function(y) {
+  obj <- parallel::mclapply(lines, mc.cores = c, function(y) {
 
     s <- grep(pattern = "Bayes Empirical Bayes", x = y)
     e <- grep(pattern = "^The grid", x = y)
@@ -35,8 +35,9 @@
                       pval = 1 - val,
                       aa = dplyr::na_if(x = aa, "NA"))
   df <- suppressWarnings(dplyr::mutate_at(.tbl = df, .vars = c("pos", "postMean", "SE"), .funs = as.numeric))
-  df <- tidyr::separate(data = df, col = id, into = c("gene", "tree"), sep = "_")
-  df <- dplyr::select(.data = df, gene, tree, pos, aa, val, pval, signif, postMean, SE)
+  # df <- tidyr::separate(data = df, col = id, into = c("gene", "tree"), sep = "_")
+  # df <- dplyr::select(.data = df, gene, tree, pos, aa, val, pval, signif, postMean, SE)
+  df <- dplyr::select(.data = df, id, pos, aa, val, pval, signif, postMean, SE)
 
   return(df)
 
