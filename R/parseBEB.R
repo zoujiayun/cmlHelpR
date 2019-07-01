@@ -56,6 +56,7 @@ parseBEB <- function(dir_path, models, cores = 1, ext = ".out") {
   ## Single tibble
   beb <- magrittr::set_names(x = beb, value = names(f))
   beb <- dplyr::bind_rows(beb, .id = "model")
+  beb <- tidyr::separate(data = beb, col = id, into = c("gene", "tree"), sep = "_")
 
   print("Getting no-gap-length value")
   alnLength <- purrr::map(f[[1]], ~{
@@ -70,11 +71,13 @@ parseBEB <- function(dir_path, models, cores = 1, ext = ".out") {
   })
 
   alnLength <- dplyr::bind_rows(alnLength, .id = "condition")
-  alnLength <- tidyr::separate(data = alnLength, col = condition, into = c("gene", "tree"), sep = "_")
+  alnLength <- dplyr::mutate(.data = alnLength, condition = sub("_.*", "", condition))
+  alnLength <- dplyr::rename(.data = alnLength, gene = condition)
+  # alnLength <- tidyr::separate(data = alnLength, col = condition, into = c("gene", "tree"), sep = "_")
 
   beb <- dplyr::left_join(beb, alnLength)
 
-  ## Return a list object of long form and nested
+  # ## Return a list object of long form and nested
   lst <- split(x = beb, beb[["model"]])
   nst <- dplyr::group_by(.data = beb, model)
   nst <- tidyr::nest(data = nst, .key = "BEB")
