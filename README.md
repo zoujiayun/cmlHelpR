@@ -36,12 +36,11 @@ That is to say, the same sequences in each of the species hits the equivalent se
 
 **Usage**:
 ```
-library(cmlHelpR)
-out <- getOrthologueHeaders(crbb_path = "path/to/crbb/out", 
-                                      crbb_ext = ".tsv", 
-                                      sample_separator = "_", 
-                                      id_pct = 95, 
-                                      aln_pct = 90)
+> out <- getOrthologueHeaders(crbb_path = "path/to/crbb/out", 
+                                           crbb_ext = ".tsv", 
+                                           sample_separator = "_", 
+                                           id_pct = 95, 
+                                           aln_pct = 90)
 ```
 
 **Output**:
@@ -92,13 +91,12 @@ As the name suggests, this function writes multi-fasta files using the table fro
 **Usage**:
 
 ```
-library(cmlHelpR)
-writeFasta(orthologies = tbl_lst, 
-                         fasta_dir = "/path/to/sequence_fastas", 
-                         pep_ext = ".pep", 
-                         nuc_ext = ".fa", 
-                         pep_out = "/path/to/peptide/outDir", 
-                         nuc_out = "/path/to/nucleotide/outDir")
+> writeFasta(orthologies = tbl_lst, 
+                           fasta_dir = "/path/to/sequence_fastas", 
+                           pep_ext = ".pep", 
+                           nuc_ext = ".fa", 
+                           pep_out = "/path/to/peptide/outDir", 
+                           nuc_out = "/path/to/nucleotide/outDir")
 ```
 
 **Output**
@@ -203,9 +201,9 @@ Input is simply the directory path to where the `CODEML` output is, the models y
 I have written these scripts to work directly with the output of the `parallel codeml` pipeline. If you want to update them, by all means do.
 
 ```
-out <- parseBEB(dir_path = "/path/to/codeml/output", 
-              models = c("M2a", "ModelA"), 
-              cores = 4)
+> out <- parseBEB(dir_path = "/path/to/codeml/output", 
+                  models = c("M2a", "ModelA"), 
+                  cores = 4)
 ```
 
 **Output**:
@@ -263,8 +261,8 @@ This is an accessory function for downstream analysis. Once you've got the long-
 The function is a simple one. It only needs the long-format dataframe from the `parseBEB()` function, a logical specifying if you want to extract significant sites only and optionally a frequency threshold to filter sites on.
 
 ```
-beb2freq(df_beb = t$list$M2a, 
-         only_signif = FLASE)
+> beb2freq(df_beb = t$list$M2a, 
+           only_signif = FLASE)
 ```
 
 **Output**
@@ -314,7 +312,9 @@ This is a parsing function to get the branch `dN/dS` values from the `CODEML` ou
 Simply pass the file path to the `CODEML` output directory. I've hard coded which evolutionary models have branch `dN/dS` values into the code. Then, pass a vector of models you want to get `dN/dS` values for.
 
 ```
-getBranchDNDS(file_list = "/path/to/codeml_out")
+> getBranchDNDS(directory_path = "/path/to/codeml_out", 
+                models = c("M1a", "ModelA", "TwoRatio"), 
+                ext = ".out")
 ```
 
 **Output**
@@ -323,7 +323,7 @@ The branch `dN/dS` values are returned in two formats; list and dataframe. The l
 
 ```
 $list
-  $list$`M8_1433E-YWHAE-YWHAE_brownForeground`
+  $list$`M8::1433E-YWHAE-YWHAE_brownForeground`
   # A tibble: 4 x 9
     branch     t     N     S `dN/dS`    dN     dS `N*dN` `S*dS`
     <chr>  <dbl> <dbl> <dbl>   <dbl> <dbl>  <dbl>  <dbl>  <dbl>
@@ -332,7 +332,7 @@ $list
   3 5..2   0.004  486.  279.       0     0 0.0035      0      1
   4 4..3   0      486.  279.       0     0 0           0      0
   
-  $list$`M8_1433E-YWHAE-YWHAE_laevisForeground`
+  $list$`M8::1433E-YWHAE-YWHAE_laevisForeground`
   # A tibble: 4 x 9
     branch     t     N     S `dN/dS`    dN     dS `N*dN` `S*dS`
     <chr>  <dbl> <dbl> <dbl>   <dbl> <dbl>  <dbl>  <dbl>  <dbl>
