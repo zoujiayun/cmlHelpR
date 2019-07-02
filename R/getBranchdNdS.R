@@ -19,28 +19,34 @@ getBranchDNDS <- function(directory_path, models, ext = ".out") {
   m <- paste0("/", models, collapse = "|")
 
   ## Listing all directories in directory path
-  d <- list.dirs(path = directory_path, full.names = TRUE, recursive = TRUE)
+  d <- normalizePath(path = list.dirs(path = directory_path, full.names = TRUE, recursive = TRUE))
   d <- d[stringr::str_detect(string = d, pattern = m)]
 
   ## Listing files + reading them in
   f <- purrr::map(d, list.files, pattern = ext, full.names = TRUE)
   f <- unlist(x = f)
-  f <- magrittr::set_names(x = f, value = stringr::str_remove(string = sub(".*/(.*)/(.*)$", "\\1_\\2", f), pattern = ext))
+  f <- magrittr::set_names(x = f, value = stringr::str_remove(string = sub(".*/(.*)/(.*)$", "\\1::\\2", f), pattern = ext))
   f <- purrr::map(f, readr::read_lines)
 
   ## Iterate through each file and get values
   d <- purrr::map(f, ~{
-    p1 <- grep(pattern = "^ branch", x = .x)
-    p2 <- grep(pattern = "^Naive\ Empirical\ Bayes\ \\(NEB\\)\ analysis", .x) - 1
-    v <- trimws(x = .x[p1:p2], which = "left")
-    v <- v[v != ""]
-    v <- stringr::str_replace_all(string = v, pattern = "\\s+", replacement = "\t")
-    readr::read_tsv(v)
+
+    subString <- .x[grep(pattern = "^ branch", x = .x):length(.x)]
+
+    end <- str_locate(string = subString, pattern = "")[,1]
+    end <- which(is.na(end))[2]
+
+    out <- trimws(x = subString[1:end], which = "left")
+    out <- out[out != ""]
+    out <- stringr::str_replace_all(string = out, pattern = "\\s+", replacement = "\t")
+    readr::read_tsv(out)
   })
 
   ## Build dataframe - nested
   df <- dplyr::bind_rows(d, .id = "id")
-  df <- tidyr::separate(data = df, col = id, into = c("model", "gene", "tree"), sep = "_")
+  df <- tidyr::separate(data = df, col = id, into = c("model", "gene_tree"), sep = "::")
+  df <- tidyr::separate(data = df, col = gene_tree, into = c("gene", "tree"), sep = "_")
+  df <- dplyr::mutate(.data = df, tree = dplyr::if_else(is.na(tree), "base", tree))
   df <- dplyr::group_by(.data = df, model, gene, tree)
   df <- tidyr::nest(data = df, .key = "branch")
 
