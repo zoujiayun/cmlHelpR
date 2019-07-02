@@ -9,8 +9,6 @@ In the sections below I'll demonstrate some use cases of the major functions of 
 # In development
 
 - Need to update functions to work with new null/site model approach
-  - parseBEB
-  - beb2freq
   - getPw
   - getBranchdNdS
 
@@ -266,34 +264,45 @@ The function is a simple one. It only needs the long-format dataframe from the `
 
 ```
 beb2freq(df_beb = t$list$M2a, 
-         only_signif = TRUE,
-         max_freq = ...)
+         only_signif = FLASE)
 ```
 
 **Output**
 
-The output is a `data.frame` object where the genes are the row names and the trees that were run are the columns. The value in each cell corresponds to the number of sites that were reported as under selection for that gene in that condition.
-
-In the example below, the number of sites reported are consistent across all trees due to the nature of the model that was run.
+The output is a list object containing two elements. The first is a long-format dataframe that contains the frequency value for each gene + model + tree combination. The second object is a tibble object with rownames for plotting in `pheatmap`. This objects columns are grouped by model and tree, with the genes being the row values.
 
 ```
-Joining, by = "gene"
-                                brownForeground laevisForeground tigerForeground
-1433T-YWHAQ-YWHAQ                             4                4               4
-2A5D-PPP2R5D-PPP2R5D                         18               18              18
-5NTC-NT5C2-NT5C2                              7                7               7
-A4GCT-A4GNT-A4GNT                             6                6               6
-AAPK2-PRKAA2-PRKAA2                           3                3               3
-AASD1-LOC113425478-LOC113449799               9                9               9
-AATC-GOT1-GOT1                               21               21              21
-ABD18-ABHD18-ABHD18                          12               12              12
-ACADM-ACADM-ACADM                             7                7               7
-ACSS3-ACSS3-ACSS3                             5                5               5
-...                                          ...              ...             ...
-XRP2-RP2-RP2                                  4                4               4
-ZDH18-ZDHHC18-ZDHHC18                         2                2               2
-ZDHC2-ZDHHC2-ZDHHC2                           2                2               2
-ZDHC8-ZDHHC8-ZDHHC8                           1                1               1
+$long
+# A tibble: 15,555 x 4
+   model gene                      tree   freq
+   <chr> <chr>                     <chr> <dbl>
+ 1 M2a   1433E-YWHAE-YWHAE         base      0
+ 2 M2a   1433T-YWHAQ-YWHAQ         base      6
+ 3 M2a   1433Z-YWHAZ-YWHAZ         base      0
+ 4 M2a   2A5D-PPP2R5D-PPP2R5D      base     29
+ 5 M2a   2AAA-PPP2R1A-PPP2R1A      base      0
+ 6 M2a   2ABA-PPP2R2A-LOC113445617 base      0
+ 7 M2a   3BHS7-HSD3B7-HSD3B7       base      2
+ 8 M2a   3MG-MPG-MPG               base      1
+ 9 M2a   4EBP1-EIF4EBP1-EIF4EBP1   base      0
+10 M2a   5HT1D-HTR1D-HTR1D         base      0
+# … with 15,545 more rows
+
+$heatmap
+# A tibble: 3,111 x 5
+   M2a_base M8_base ModelA_brownForeground ModelA_laevisForeground ModelA_tigerForeground
+ *    <dbl>   <dbl>                  <dbl>                   <dbl>                  <dbl>
+ 1        0       0                      0                       0                      0
+ 2        6       6                      0                       6                      0
+ 3        0       0                      0                       0                      0
+ 4       29      29                      0                      28                      0
+ 5        0       0                      0                       0                      0
+ 6        0       0                      0                       0                      0
+ 7        2      28                      0                       0                      9
+ 8        1      12                      3                       0                      1
+ 9        0       1                      0                       0                      0
+10        0      12                      0                       0                      2
+# … with 3,101 more rows
 ```
 
 ## Function: getBranchDNDS()
