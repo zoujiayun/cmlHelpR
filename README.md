@@ -8,9 +8,7 @@ In the sections below I'll demonstrate some use cases of the major functions of 
 
 # In development
 
-- Need to update functions to work with new null/site model approach
-  - getPw
-  - getBranchdNdS
+- Probably a lot
 
 # Installation
 In the `R-studio` console, execute the following code.
