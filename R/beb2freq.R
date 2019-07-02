@@ -22,6 +22,7 @@ beb2freq <- function(df_long, significant = NULL) {
   df <- dplyr::mutate(.data = df, freq = unlist(purrr::map(beb, dplyr::tally)))
   df <- dplyr::mutate(.data = df, freq = id * freq)
   df <- dplyr::select(.data = df, model, gene, tree, freq)
+  df <- tidyr::replace_na(data = df, replace = 0)
 
   ## Building plotting format
   plt <- tidyr::unite(data = df, model_tree, c("model", "tree"))
