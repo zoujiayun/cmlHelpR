@@ -477,9 +477,9 @@ The last input is the statistical correction you want to apply. I've simply used
 The function is then executed like so:
 
 ```
-out <- goFisher(gene_GOID_mapping = g2g, 
-                gene_cluster_mapping = gws, 
-                pAdj_method = "bonferroni")
+> out <- goFisher(gene_GOID_mapping = g2g, 
+                  gene_cluster_mapping = gws, 
+                  pAdj_method = "bonferroni")
 ```
 
 **Output**
