@@ -1,48 +1,36 @@
 #' Create a frequency table from the parsed Bayes Empiracle Bayes data frame
 #'
 #' Creates a frequency table based on the parsed output from the parse_BEB() function
-#' @param df_beb data frame from parse_BEB() function
+#' @param df_long data frame from parse_BEB() function
 #' @param only_signif Set to TRUE to select only significant sites
 #' @param max_freq Keep genes who have n-sites under selection up to or equal to this
 #' @keywords frequency table
 #' @export
 #' @examples
-#' BEBDF2Freq(df_beb = df.beb, only_signif = TRUE, max_freq = 100)
-beb2freq <- function(df_beb, only_signif = NULL, max_freq = NULL) {
+#' beb2freq(df_long = df.beb, only_signif = TRUE)
+beb2freq <- function(df_long, significant = NULL) {
 
-  ## Split on tree
-  lst.byTree <- split(df_beb, df_beb$tree)
-
-  ## Filter to significant sites only
-  if (isTRUE(only_signif)) {
-
-    lst.byTree <- purrr::map(lst.byTree, dplyr::filter, signif != "NA")
-
+  ## Filtering on significance
+  if (isTRUE(significant)) {
+    df_long <- purrr::map(df_long, dplyr::filter, signif != "NA")
   }
 
-  ## Get frequencies
-  lst.freq <- purrr::map(names(lst.byTree), ~{
+  ## Getting frequency
+  df <- dplyr::mutate(.data = df_long, id = dplyr::if_else(rowSums(is.na(df_long[4:10])) == 7, 0, 1))
+  df <- dplyr::group_by(.data = df, model, gene, tree, id)
+  df <- tidyr::nest(data = df, .key = beb)
+  df <- dplyr::mutate(.data = df, freq = unlist(purrr::map(beb, dplyr::tally)))
+  df <- dplyr::mutate(.data = df, freq = id * freq)
+  df <- dplyr::select(.data = df, model, gene, tree, freq)
 
-    tbl.consistent <- table(lst.byTree[[.x]]$gene)             ## Table of frequencies
-    df.consistent <- tibble::as_tibble(as.data.frame(tbl.consistent))  ## Convert to df
-    df.consistent <- dplyr::rename(.data = df.consistent,             ## Renaming columns
-                            gene = Var1,
-                            !! .x := Freq)
-  })
+  ## Building plotting format
+  plt <- tidyr::unite(data = df, model_tree, c("model", "tree"))
+  plt <- tidyr::spread(data = plt, model_tree,  freq)
+  plt <- tibble::column_to_rownames(.data = plt, "gene")
+  plt <- tibble::as_tibble(x = plt, rownames = NA)
 
-  df.freq <- purrr::reduce(lst.freq, dplyr::full_join)
-  df.freq <- replace(df.freq, is.na(df.freq), 0)
-
-  ## Filter by maximum value
-  if (!is.null(max_freq)) {
-
-    df.freq <- dplyr::filter_if(.tbl = df.freq, is.numeric, dplyr::all_vars(. <= max_freq))
-
-  }
-
-  ## Convert to data.frame with rownames
-  df.freq <- tibble::column_to_rownames(.data = df.freq, var = "gene")
-
-  return(df.freq)
+  ## Object to return
+  lst <- list(long = df, heatmap = plt)
+  return(lst)
 
 }
