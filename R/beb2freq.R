@@ -12,7 +12,7 @@ beb2freq <- function(df_long, significant = NULL) {
 
   ## Filtering on significance
   if (isTRUE(significant)) {
-    df_long <- purrr::map(df_long, dplyr::filter, signif != "NA")
+    df_long <- dplyr::filter(.data = df_long, !is.na(signif))
   }
 
   ## Getting frequency
