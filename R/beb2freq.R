@@ -24,11 +24,11 @@ beb2freq <- function(df_long, significant = NULL, site_as_prop = NULL) {
   df <- dplyr::select(.data = df, model, gene, tree, freq, seqLen)
 
   if(!is.null(site_as_prop)){
-    df <- dplyr::mutate(.data = df, prop = freq/seqLen)
-    df <- dplyr::select(.data = df, model, gene, tree, prop)
+    tmp <- dplyr::mutate(.data = df, prop = freq/seqLen)
+    tmp <- dplyr::select(.data = tmp, model, gene, tree, prop)
 
     ## Building plotting format
-    plt <- tidyr::unite(data = df, model_tree, c("model", "tree"))
+    plt <- tidyr::unite(data = tmp, model_tree, c("model", "tree"))
     plt <- tidyr::spread(data = plt, model_tree,  prop)
     plt[is.na(plt)] <- 0
     plt <- tibble::column_to_rownames(.data = plt, "gene")
@@ -37,10 +37,10 @@ beb2freq <- function(df_long, significant = NULL, site_as_prop = NULL) {
   } else {
 
     ## Selecting necessary columns
-    df <- dplyr::select(.data = df, model, gene, tree, freq)
+    tmp <- dplyr::select(.data = df, model, gene, tree, freq)
 
     ## Building plotting format
-    plt <- tidyr::unite(data = df, model_tree, c("model", "tree"))
+    plt <- tidyr::unite(data = tmp, model_tree, c("model", "tree"))
     plt <- tidyr::spread(data = plt, model_tree,  freq)
     plt[is.na(plt)] <- 0
     plt <- tibble::column_to_rownames(.data = plt, "gene")
