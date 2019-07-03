@@ -9,7 +9,7 @@
 #' @export
 #' @examples
 #' getBEB(dir_path = "path/to/parent_out", models = c("M2a", "M8", "ModelA"), cores = 4, ext = ".customOut")
-getBEB <- function(dir_path, models, cores = 1, ext = ".out") {
+getBEB <- function(dir_path, models, sig = NULL, cores = 1, ext = ".out") {
 
   ## Models with BEB output
   m <- c("M2a", "M8", "ModelA")
@@ -76,6 +76,11 @@ getBEB <- function(dir_path, models, cores = 1, ext = ".out") {
   # alnLength <- tidyr::separate(data = alnLength, col = condition, into = c("gene", "tree"), sep = "_")
 
   beb <- dplyr::left_join(beb, alnLength)
+
+  ## Significance filtering
+  if(!is.null(sig)){
+    beb <- dplyr::filter(.data = beb, pval <= sig)
+  }
 
   # ## Return a list object of long form and nested
   lst <- split(x = beb, beb[["model"]])
