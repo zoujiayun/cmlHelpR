@@ -67,14 +67,11 @@ getBEB <- function(dir_path, models, sig = NULL, cores = 1, ext = ".out") {
     r <- r[stringr::str_detect(string = r, pattern = "^3")]
     r <- stringr::str_split(string = r, pattern = "\\s+")
     r <- unlist(x = r)
-    tibble::tibble(no_gap_length = as.numeric(r[[2]]))
+    tibble::tibble(seqLen = as.numeric(r[[2]]))
 
   })
 
   alnLength <- dplyr::bind_rows(alnLength, .id = "gene")
-  alnLength <- dplyr::mutate(.data = alnLength, condition = sub("_.*", "", gene))
-  # alnLength <- tidyr::separate(data = alnLength, col = condition, into = c("gene", "tree"), sep = "_")
-
   beb <- dplyr::left_join(beb, alnLength)
 
   ## Significance filtering
