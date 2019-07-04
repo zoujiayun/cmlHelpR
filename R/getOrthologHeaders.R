@@ -16,16 +16,16 @@
 #' @keywords helper
 #' @export
 #' @examples
-#' get_ortholog_headers(crbb_path = "path/to/directory", crbb_ext = ".tsv", sample_separator = "__", id_pct = 95, aln_pct = 90)
+#' getOrthologHeaders(crbb_path = "path/to/directory", crbb_ext = ".tsv", sample_separator = "__", id_pct = 95, aln_pct = 90)
 getOrthologHeaders <- function(crbb_path, crbb_ext, sample_separator, id_pct, aln_pct) {
 
   ## Column names of CRBB output
   colNames <- c("query", "target", "id", "alnlen", "evalue",
-                     "bitscore", "qstart", "tstart", "qlen", "tlen")
+                "bitscore", "qstart", "tstart", "qlen", "tlen")
 
   ## Importing files in CRBB output directory
   crbb_files <- list.files(path = crbb_path, pattern = crbb_ext, full.names = TRUE)
-  crbb_files <- magrittr::set_names(x = crbb_files, value = str_remove_all(string = basename(crbb_files), pattern = crbb_ext))
+  crbb_files <- magrittr::set_names(x = crbb_files, value = stringr::str_remove_all(string = basename(crbb_files), pattern = crbb_ext))
   crbb_list <- purrr::map(crbb_files, readr::read_tsv, col_names = colNames)
 
   ## Selecting BEST Reciprocal best hit: arrange by %id --> evalue --> take top value of group (by gene) == Overall most likely ortholog candidate
@@ -37,33 +37,32 @@ getOrthologHeaders <- function(crbb_path, crbb_ext, sample_separator, id_pct, al
     g_q <- paste("gene", q, sep = "_")  ## Column names
     g_t <- paste("gene", t, sep = "_")  ## Column names
 
-    crbb_list[[.x]] %>%
-      dplyr::rename(!! q := query,                                       ## Renaming `query` with actual query species name
-                    !! t := target) %>%                                  ## Renaming `target` with actual target species name
-      dplyr::mutate(!! g_q := sub(".+_(.*)", "\\1", .[[q]]),             ## Query gene symbols from custom fasta header (IMPORTANCE OF IT BEING LAST IN HEADER!!!)
-                    !! g_t := sub(".+_(.*)", "\\1", .[[t]]),             ## Target gene symbols from custom fasta header (IMPORTANCE OF IT BEING LAST IN HEADER!!!)
-                    prop_qlen = alnlen/qlen * 100,                       ## Getting alignment as proportion of query total length
-                    prop_tlen = alnlen/tlen * 100) %>%                   ## Getting alignment as proportion of target total length
-      dplyr::select(1, 2, 11, 12, 3, 5, 6, 13, 14) %>%                   ## Selecting columns by column index
-      dplyr::arrange(.[[g_q]],
-                     dplyr::desc(id),
-                     dplyr::desc(bitscore)) %>%                          ## Arranging by query gene symbol --> %id --> bitscore
-      dplyr::group_by_at(g_q) %>%                                        ## Grouping by query gene symbol
-      dplyr::slice(1) %>%                                                ## Selecting best hit by taking top row of group (highest %id + highest bitscore)
-      dplyr::ungroup() %>%
-      dplyr::group_by_at(t) %>%                                          ## Grouping by target header
-      dplyr::arrange(.[[t]],
-                     dplyr::desc(id),
-                     dplyr::desc(bitscore)) %>%                          ## Arranging by target header --> %id --> bitscore
-      dplyr::slice(1) %>%                                                ## Selecting best hit by taking top row of target (highest %id + lowest bitscore)
-      dplyr::ungroup() %>%
-      dplyr::filter(id > id_pct) %>%                                     ## Filtering by minimum identity %
-      dplyr::filter(prop_qlen >= aln_pct & prop_tlen >= aln_pct) %>%     ## Ensure alignment % is a significant proportion of query AND target sequence
-      dplyr::select(q, t, g_q, g_t)                                      ## Columns needed for next step
+    df <- dplyr::rename(.data = crbb_list[[.x]], !! q := query, !! t := target)
+    df <- dplyr::mutate(.data = df,
+                        !! g_q := sub(".+_(.*)", "\\1", df[[q]]),
+                        !! g_t := sub(".+_(.*)", "\\1", df[[t]]),
+                        prop_qlen = alnlen/qlen * 100,
+                        prop_tlen = alnlen/tlen * 100)
+    df <- dplyr::select(.data = df, 1, 2, 11, 12, 3, 5, 6, 13, 14)
+    df <- dplyr::arrange(.data = df, df[[g_q]],
+                         dplyr::desc(id),
+                         dplyr::desc(bitscore))
+    df <- dplyr::group_by_at(.tbl = df, g_q)
+    df <- dplyr::slice(.data = df, 1)
+    df <- dplyr::ungroup(x = df)
+    df <- dplyr::group_by_at(.tbl = df, t) ## Arranging by target and slicing first hit incase duplicate.
+    df <- dplyr::arrange(.data = df, df[[t]],
+                   dplyr::desc(id),
+                   dplyr::desc(bitscore))
+    df <- dplyr::slice(.data = df, 1)
+    df <- dplyr::ungroup(x = df)
+    df <- dplyr::filter(.data = df, id > id_pct)
+    df <- dplyr::filter(.data = df, prop_qlen >= aln_pct & prop_tlen >= aln_pct)
+    df <- dplyr::select(df, q, t, g_q, g_t)
   })
 
   ## Matching between the different comparisons
-  orth_df <- purrr::reduce(.x = bestHits_list, dplyr::left_join) ## Reduce command applies left join to all dataframes in the list
+  orth_df <- purrr::reduce(.x = bestHits_list, dplyr::left_join)   ## Reduce command applies left join to all dataframes in the list
   orth_df <- tidyr::drop_na(data = orth_df)                        ## Removing rows where information isn't present for ALL samples
   orth_df <- tidyr::unite(data = orth_df,                          ## Uniting gene symbol columns to generate file name column
                         col = "file_name",
