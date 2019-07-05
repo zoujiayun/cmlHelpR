@@ -3,14 +3,14 @@
 #' This function checks the distance between sites under selection and reports those that
 #' fall within a specified distance of each other. For example, if you have two sites reported as
 #' under selection, but they are the two amino acids next to each other, both sites would be reported
-#' if the gap_threshold was set to '1'.
+#' if the distance_threshold was set to '1'.
 #' @param beb_long Long form BEB table from getBEB() function
-#' @param gap_threshold Report sites that are within this proximity to other reported sites under selection
+#' @param distance_threshold Report sites that are within this proximity to other reported sites under selection
 #' @keywords helper
 #' @export
 #' @examples
-#' isSequential(beb_long = df.beb, gap_threshold = 1)
-isSequential <- function(beb_long, gap_threshold){
+#' isSequential(beb_long = df.beb, distance_threshold = 1)
+isSequential <- function(beb_long, distance_threshold){
 
   ## Nesting long-form data
   nst <- dplyr::group_by(.data = beb_long, model, gene, tree)
@@ -24,7 +24,7 @@ isSequential <- function(beb_long, gap_threshold){
                          rn <- 1:nrow(.x) ## Row number used as position name
                          names(pos) <- rn
 
-                         pos_gap <- which(diff(pos) <= gap_threshold) ## Sites within the proximity
+                         pos_gap <- which(diff(pos) <= distance_threshold) ## Sites within the proximity
                          pos_len <- length(pos_gap) ## N-sites that fail proximity threshold
 
                          if(pos_len > 0){ ## When there is at least one site that is too close to another
@@ -47,7 +47,7 @@ isSequential <- function(beb_long, gap_threshold){
                          rn <- 1:nrow(.x)
                          names(pos) <- rn
 
-                         pos_gap <- which(diff(pos) <= gap_threshold)
+                         pos_gap <- which(diff(pos) <= distance_threshold)
                          pos_len <- length(pos_gap)
 
                          if(pos_len > 0){
