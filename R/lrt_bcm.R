@@ -24,4 +24,6 @@
                       delta = (2*(abs(o[[6]] - o[[5]]))),
                       degFree = abs(o[[4]] - o[[3]]),
                       pval = pchisq(delta, degFree, lower.tail=FALSE))
+
+  return(o)
 }

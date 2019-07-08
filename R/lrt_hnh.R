@@ -11,9 +11,10 @@
 .lrt_hnh <- function(df, mdl){
   o <- dplyr::filter(.data = df, stringr::str_detect(string = model, pattern = paste0(mdl, "$", collapse = "|")))
 
-  ## null/site
-  r <- dplyr::filter(.data = o, !stringr::str_detect(string = id, pattern = "_")) ## Row without tree
+  ## Cleaning null/site
+  r <- dplyr::filter(.data = o, !stringr::str_detect(string = id, pattern = "_")) ## Selecting row without tree
   m <- dplyr::pull(.data = r, model) ## Model ID
+  m <- unique(m)
 
   newNP <- paste0("np_", m)   ## New column names
   newlnL <- paste0("lnL_", m) ## New column names
@@ -38,4 +39,6 @@
                      delta = (2*(abs(o[[6]] - o[[5]]))),
                      degFree = abs(o[[4]] - o[[3]]),
                      pval = pchisq(delta, degFree, lower.tail=FALSE))
+
+  return(o)
 }
