@@ -9,7 +9,7 @@
 #' @export
 #' @examples
 #' goFisher(gene_2_go = df.genes2go, gene_2_group = df.genes2group ,pAdj_method = "bonferroni")
-goFisher <- function(gene_2_go, gene_2_group, pAdj_method){
+goFisher <- function(gene_2_go, gene_2_group, pAdj_method, p_cutoff){
 
   ## Improvement: Join both inputs into one dataframe that is then parsed. Should
   ## save on a few of the left joins later on in the code.
@@ -68,9 +68,26 @@ goFisher <- function(gene_2_go, gene_2_group, pAdj_method){
   out <- dplyr::group_by(.data = out, group)            ## Grouping to limit correction to group - not to all samples
   out <- dplyr::mutate(.data = out, adjP = p.adjust(p = pVal, method = pAdj_method))  ## Correcting using p.adjust
   out <- dplyr::select(out, 1, 2, 5, 9, 6, 7, 8, dplyr::everything())     ## Arrange columns
-  out <- dplyr::arrange(.data = out, group, adjP)                         ## Sort by group and adjusted-p
+  out <- dplyr::arrange(.data = out, adjP)                         ## Sort by group and adjusted-p
   out <- dplyr::ungroup(out)
+
+  ## Adjusted p-value cut-off
+  if(!is.null(p_cutoff)){
+    out <- filter(.data = out, adjP <= p_cutoff)
+  }
 
   return(out)
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
