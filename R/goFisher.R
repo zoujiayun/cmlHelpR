@@ -79,15 +79,3 @@ goFisher <- function(gene_2_go, gene_2_group, pAdj_method, p_cutoff){
   return(out)
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
