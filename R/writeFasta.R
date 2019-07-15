@@ -9,18 +9,21 @@
 #' @export
 #' @examples
 #' write_fasta(orthologs = listObj, fasta_dir = "path/to/fasta/directory", fasta_ext = ".fasta", out_dir = "path/to/output/dir")
-writeFasta <- function(orthologs, fasta_dir, pep_ext, nuc_ext, pep_out, nuc_out){
+writeFasta <- function(orthologs, fasta_dir, pep_ext, nuc_ext, pep_out, nuc_out, stop_codon = "."){
 
   ## Create output directories
+  print("Creating output dirs")
   dir.create(path = pep_out, recursive = TRUE)
   dir.create(path = nuc_out, recursive = TRUE)
 
   ## Import peptide files
+  print("Importing peptide sequence")
   pep_seq <- list.files(path = fasta_dir, pattern = pep_ext, full.names = TRUE)
   pep_seq <- magrittr::set_names(x = pep_seq, stringr::str_remove(string = basename(pep_seq), pattern = pep_ext))
   pep_seq <- purrr::map(.x = pep_seq, .f = Biostrings::readAAStringSet, format = "fasta")
 
   ## Importing nucleotide files
+  print("Importing nucleotide sequence")
   nuc_seq <- list.files(path = fasta_dir, pattern = nuc_ext, full.names = TRUE)
   nuc_seq <- magrittr::set_names(x = nuc_seq, stringr::str_remove(string = basename(nuc_seq), pattern = nuc_ext))
   nuc_seq <- purrr::map(.x = nuc_seq, .f = Biostrings::readAAStringSet, format = "fasta")
@@ -29,6 +32,7 @@ writeFasta <- function(orthologs, fasta_dir, pep_ext, nuc_ext, pep_out, nuc_out)
   genes_long <- orthologs[[2]]
 
   ##
+  print("Writing fasta files")
   out <- purrr::pmap(.l = genes_long, .f = function(file_name, data){
 
     pep_temp <- purrr::pmap(.l = data, .f = function(sample, header) {
@@ -43,7 +47,7 @@ writeFasta <- function(orthologs, fasta_dir, pep_ext, nuc_ext, pep_out, nuc_out)
     pep_temp <- Biostrings::AAStringSetList(pep_temp)@unlistData
 
     ## Any stop codons?
-    stop_df <- tibble::as_tibble(Biostrings::vmatchPattern(pattern = ".", subject = pep_temp))
+    stop_df <- tibble::as_tibble(Biostrings::vmatchPattern(pattern = stop_codon, subject = pep_temp))
     stop_df <- dim(stop_df)[[1]]
 
     ## If no internal stop codons
