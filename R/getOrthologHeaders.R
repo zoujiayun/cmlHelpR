@@ -45,18 +45,18 @@ getOrthologHeaders <- function(crbb_path, crbb_ext, sample_separator, id_pct, al
                         prop_tlen = alnlen/tlen * 100)
     df <- dplyr::select(.data = df, 1, 2, 11, 12, 3, 5, 6, 13, 14)
     df <- dplyr::arrange(.data = df, df[[g_q]],
-                         dplyr::desc(id),
-                         dplyr::desc(bitscore))
+                         dplyr::desc(bitscore),
+                         dplyr::desc(id))
     df <- dplyr::group_by_at(.tbl = df, g_q)
     df <- dplyr::slice(.data = df, 1)
     df <- dplyr::ungroup(x = df)
     df <- dplyr::group_by_at(.tbl = df, t) ## Arranging by target and slicing first hit incase duplicate.
     df <- dplyr::arrange(.data = df, df[[t]],
-                   dplyr::desc(id),
-                   dplyr::desc(bitscore))
+                         dplyr::desc(bitscore),
+                         dplyr::desc(id))
     df <- dplyr::slice(.data = df, 1)
     df <- dplyr::ungroup(x = df)
-    df <- dplyr::filter(.data = df, id > id_pct)
+    df <- dplyr::filter(.data = df, id >= id_pct)
     df <- dplyr::filter(.data = df, prop_qlen >= aln_pct & prop_tlen >= aln_pct)
     df <- dplyr::select(df, q, t, g_q, g_t)
   })
