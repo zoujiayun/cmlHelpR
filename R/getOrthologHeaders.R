@@ -28,7 +28,7 @@ getOrthologHeaders <- function(crbb_path, crbb_ext, sample_separator, id_pct, al
   crbb_files <- magrittr::set_names(x = crbb_files, value = stringr::str_remove_all(string = basename(crbb_files), pattern = crbb_ext))
   crbb_list <- purrr::map(crbb_files, readr::read_tsv, col_names = colNames)
 
-  ## Selecting BEST Reciprocal best hit: arrange by %id --> evalue --> take top value of group (by gene) == Overall most likely ortholog candidate
+  ## Selecting BEST Reciprocal best hit: arrange by descending bitscore then %id - take top value of group (by gene) == Overall most likely ortholog candidate
   bestHits_list <- purrr::map(names(crbb_list), ~{
 
     q <- sub(paste0(sample_separator, ".*") , "", .x)   ## Getting query_sequence name
@@ -44,10 +44,10 @@ getOrthologHeaders <- function(crbb_path, crbb_ext, sample_separator, id_pct, al
                         prop_qlen = alnlen/qlen * 100,
                         prop_tlen = alnlen/tlen * 100)
     df <- dplyr::select(.data = df, 1, 2, 11, 12, 3, 5, 6, 13, 14)
+    df <- dplyr::group_by_at(.tbl = df, g_q)
     df <- dplyr::arrange(.data = df, df[[g_q]],
                          dplyr::desc(bitscore),
                          dplyr::desc(id))
-    df <- dplyr::group_by_at(.tbl = df, g_q)
     df <- dplyr::slice(.data = df, 1)
     df <- dplyr::ungroup(x = df)
     df <- dplyr::group_by_at(.tbl = df, t) ## Arranging by target and slicing first hit incase duplicate.
