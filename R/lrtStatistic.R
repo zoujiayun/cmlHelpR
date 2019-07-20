@@ -1,16 +1,18 @@
-#' Description
+#' Conduct Likelihood-Ratio-Test (LRT) between two evolutionary models
 #'
-#' General run down of what it does
-#' @param dir_path Path to codeml_parallel output directory.
-#' @param lst_comparisons Combinations/comparisons of the above models
+#' This function takes the path to the parallel_codeml output directory and a list of comparisons as input.
+#' Based on these variables, it will go and run LRTs for each comparison, generating a list of data frames
+#' containing all parameters used to run the statistic, as well as the result.
+#' @param dir_path Path to `parallel_codeml` output directory.
+#' @param comp_list Model combinations as a list of vectors
 #' @param ext Extension of CODEML output files. Defaults to ".out"
 #' @export
 #' @examples
-#' lrt_statistic(dir_path = "path/to/codeml_out", models = c("M1a", "M2a"), lst_comparisons = c("M1a", "M2a"))
-lrtStatistic <- function(dir_path, lst_comparisons, ext = ".out") {
+#' lrt_statistic(dir_path = "path/to/codeml_out", comp_list = list(c("M1a", "M2a"), c("TwoRatio", "M0")))
+lrtStatistic <- function(dir_path, comp_list, ext = ".out") {
 
   ## Models
-  m <- unlist(lst_comparisons)
+  m <- unlist(comp_list)
   m <- unique(m)
 
   ## Predefined groupings
@@ -39,7 +41,7 @@ lrtStatistic <- function(dir_path, lst_comparisons, ext = ".out") {
   np_lnL <- dplyr::bind_rows(np_lnL, .id = "model")
 
   ## Calculating LRT statistic
-  out_lrt <- purrr::map(lst_comparisons, ~{
+  out_lrt <- purrr::map(comp_list, ~{
 
     if(all(is.element(.x, nsm))) {       ## Both models are null/site models
 
@@ -61,7 +63,7 @@ lrtStatistic <- function(dir_path, lst_comparisons, ext = ".out") {
   })
 
   ## Assigning names to list object
-  names(out_lrt) <- purrr::map(lst_comparisons, ~{paste(.x, collapse = "-")})
+  names(out_lrt) <- purrr::map(comp_list, ~{paste(.x, collapse = "-")})
   return(out_lrt)
 
 }
