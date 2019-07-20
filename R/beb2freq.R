@@ -1,14 +1,14 @@
-#' Create a frequency table from the parsed Bayes Empiracle Bayes data frame
+#' Create a frequency table from the parsed Bayes Empiracle Bayes data
 #'
-#' Creates a frequency table based on the parsed output from the parse_BEB() function
-#' @param df_long data frame from parse_BEB() function
+#' Creates a frequency table based on the parsed output from the getBEB() function in the cmlHelpR package.
+#' @param df_long Long form data frame from the getBEB() function
 #' @param only_signif Set to TRUE to select only significant sites
-#' @param max_freq Keep genes who have n-sites under selection up to or equal to this
+#' @param site_as_prop Return frequencies values as a proportion of the genes length instead of simple counts
 #' @keywords frequency table
 #' @export
 #' @examples
-#' beb2freq(df_long = df.beb, only_signif = TRUE)
-beb2freq <- function(df_long, significant = NULL, site_as_prop = NULL) {
+#' getFreq(df_long = df.beb, significant = TRUE, site_as_prop = TRUE)
+getFreq <- function(df_long, significant = NULL, site_as_prop = NULL) {
 
   ## Filtering on significance
   if (isTRUE(significant)) {
