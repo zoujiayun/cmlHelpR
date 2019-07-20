@@ -1,15 +1,15 @@
 #' Parse dN/dS branch values from output files
 #'
-#' Given a list of files, this function will parse the branch dN/dS value from the
+#' Given the path to the parallel_codeml output directory, this function will parse the branch dN/dS values from the
 #' CODEML output. It returns a list and nested dataframe object of dN/dS values for each file.
-#' @param directory_path Vector of file names with path
+#' @param dir_path Path to parallel_codeml output directory
 #' @param models Models to get branch dN/dS values for
 #' @param ext Extension of CODEML output files
 #' @keywords helper
 #' @export
 #' @examples
-#' getBranchdNdS(directory_path = list.files(path = "path/to/codeml/outDir", models = c("M1a", "M8")))
-getBranchDNDS <- function(directory_path, models, ext = ".out") {
+#' getBranchdNdS(dir_path = list.files(path = "path/to/codeml/outDir", models = c("M1a", "M8")))
+getBranchDNDS <- function(dir_path, models, ext = ".out") {
 
   ## Check: do the models provided match all contain branch dN/dS values
   g <- c("FreeRatio" ,"M0" ,"M1a" ,"M2a_Rel" ,"M3" ,"M7" ,"M8" , "TwoRatio")
@@ -19,7 +19,7 @@ getBranchDNDS <- function(directory_path, models, ext = ".out") {
   m <- paste0("/", models, collapse = "|")
 
   ## Listing all directories in directory path
-  d <- normalizePath(path = list.dirs(path = directory_path, full.names = TRUE, recursive = TRUE))
+  d <- normalizePath(path = list.dirs(path = dir_path, full.names = TRUE, recursive = TRUE))
   d <- d[stringr::str_detect(string = d, pattern = m)]
 
   ## Listing files + reading them in
