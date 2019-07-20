@@ -1,6 +1,7 @@
 #' Parse BEB output from M2a and M8 codeml output
 #'
-#' General run down of what it does
+#' Internal function for parsing the BEB output from M2a and M8 output files.
+#' Parsing works by using anchors specific to these models
 #' @param lines List of codeml output files
 #' @param c number of cores
 #' @keywords internal
