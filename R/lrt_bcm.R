@@ -1,4 +1,4 @@
-#' Calculate LRT statistic for Branch/clade/branch-site models
+#' Calculate LRT statistic for when both models are Branch/clade/branch-site models
 #'
 #' Builds a table from the np/lnL data and runs an LRT analysis between two models.
 #' @param df Long-format dataframe to parse for model information
