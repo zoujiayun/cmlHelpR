@@ -1,14 +1,17 @@
-#' Writes a multi-fasta file by gene
+#' Writes a multi-fasta file by gene for n-species
 #'
-#' This function creates fasta files for each gene sequence from the orthologue table (get_ortholog_headers()).
-#' @param orthologs Orthologue list object from get_ortholog_headers
-#' @param fasta_dir Directory where sample fasta files are located (peptide sequences)
-#' @param fasta_ext Extension of fasta files
-#' @param out_dir Directory where multi-fasta files should be written
+#' This function creates fasta files for each gene sequence from the orthologue table (`getOrthologueHeaders``).
+#' @param orthologs Output object from `getOrthologueHeaders()` function
+#' @param fasta_dir Directory where fasta files (peptide and nucleotide) are located for each sample in table
+#' @param pep_ext Extension of peptide files
+#' @param nuc_ext Extension of nucleotide files
+#' @param pep_out Path to output directory for peptide files
+#' @param nuc_out Path to output directory for nucleotide files
+#' @param stop_codon Character that is used to specify what a stop codon is in your sequence. Defaul = "."
 #' @keywords write fasta, by-gene
 #' @export
 #' @examples
-#' write_fasta(orthologs = listObj, fasta_dir = "path/to/fasta/directory", fasta_ext = ".fasta", out_dir = "path/to/output/dir")
+#' write_fasta(orthologs = listObj, fasta_dir = "path/to/fasta/directory", nuc_ext = ".fna", pep_ext = ".pep", nuc_out = "path/to/nuc_out/dir", pep_out = "/path/to/pep_out/dir", stop_codon = "*")
 writeFasta <- function(orthologs, fasta_dir, pep_ext, nuc_ext, pep_out, nuc_out, stop_codon = "."){
 
   ## Create output directories
