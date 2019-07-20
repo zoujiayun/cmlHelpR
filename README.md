@@ -199,11 +199,11 @@ Input is simply the directory path to where the `CODEML` output is, the models y
 I have written these scripts to work directly with the output of the `parallel codeml` pipeline. If you want to update them, by all means do.
 
 ```
-> out <- getBEB(dir_path = "/path/to/codeml/output", 
-                  models = c("M2a", "ModelA"), 
-                  sig = 0.05,
-                  cores = 4,
-                  ext = ".out")
+> beb <- getBEB(dir_path = "/path/to/codeml/output", 
+                models = c("M2a", "ModelA"), 
+                sig = 0.05,
+                cores = 4,
+                ext = ".out")
 ```
 
 **Output**:
@@ -252,7 +252,7 @@ $nested
 3 ModelA <tibble [3 × 11]>
 ```
 
-## Function: beb2freq()
+## Function: getFreq()
 
 This is an accessory function for downstream analysis. Once you've got the long-format dataframe from `getBEB()`, you might want to get a count of how many sites were under selection in each gene. This is especially useful for when you run multiple models and multiple trees.
 
@@ -261,7 +261,7 @@ This is an accessory function for downstream analysis. Once you've got the long-
 The function is a simple one. It only needs the long-format dataframe from the `getBEB()` function, a logical specifying if you want to extract significant sites only and optionally a frequency threshold to filter sites on.
 
 ```
-> beb2freq(df_beb = t$list$M2a, 
+> getFreq(df_beb = beb$list$M2a, 
            only_signif = FLASE)
 ```
 
