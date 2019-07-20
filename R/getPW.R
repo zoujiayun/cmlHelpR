@@ -1,7 +1,7 @@
 #' Parse the `p` and `w` fields from codeml output files
 #'
 #' Extracts the p and w lines from codeml output and stores it in a list/data frame object
-#' @param dir_path Path to codeml_parallel output directory.
+#' @param dir_path Path to codeml_parallel output directory
 #' @param models Vector of models to extract p/w information from
 #' @param ext Extension of output files
 #' @keywords parse
