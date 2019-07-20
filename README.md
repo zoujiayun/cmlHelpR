@@ -188,7 +188,7 @@ $`CmC-M2a_Rel`
 3 RHOA-RHOA-RHOA tigerForeground      10          9   -780.       -780.     0       1     1
 ```
 
-## Function: parseBEB()
+## Function: getBEB()
 
 Bayes Empirical Bayes (BEB) data is reported for some models (e.g. ModelA, M2a and M8) which represents putative sites under selection. This function parses that information into an easy to use dataframe object that can be manipulated for down-stream analysis.
 
@@ -199,9 +199,11 @@ Input is simply the directory path to where the `CODEML` output is, the models y
 I have written these scripts to work directly with the output of the `parallel codeml` pipeline. If you want to update them, by all means do.
 
 ```
-> out <- parseBEB(dir_path = "/path/to/codeml/output", 
+> out <- getBEB(dir_path = "/path/to/codeml/output", 
                   models = c("M2a", "ModelA"), 
-                  cores = 4)
+                  sig = 0.05,
+                  cores = 4,
+                  ext = ".out")
 ```
 
 **Output**:
@@ -252,11 +254,11 @@ $nested
 
 ## Function: beb2freq()
 
-This is an accessory function for downstream analysis. Once you've got the long-format dataframe from `parseBEB()`, you might want to get a count of how many sites were under selection in each gene. This is especially useful for when you run multiple models and multiple trees.
+This is an accessory function for downstream analysis. Once you've got the long-format dataframe from `getBEB()`, you might want to get a count of how many sites were under selection in each gene. This is especially useful for when you run multiple models and multiple trees.
 
 **Usage**
 
-The function is a simple one. It only needs the long-format dataframe from the `parseBEB()` function, a logical specifying if you want to extract significant sites only and optionally a frequency threshold to filter sites on.
+The function is a simple one. It only needs the long-format dataframe from the `getBEB()` function, a logical specifying if you want to extract significant sites only and optionally a frequency threshold to filter sites on.
 
 ```
 > beb2freq(df_beb = t$list$M2a, 
