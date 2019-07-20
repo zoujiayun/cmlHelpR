@@ -1,10 +1,11 @@
-#' Conduct Gene Ontology within gene clusters using Fisher Test
+#' Significance testing of GO terms for grouped data
 #'
-#' Conducts a Fisher's Exact Test on all GO terms within a gene cluster.
+#' Conducts a Fisher's exact test on a 2x2 contigency table of presence/absence of GO terms for grouped data.
 #' @param gene_2_go Dataframe that contains two columns. Column 1 is gene ID and column 2 is GO terms associated with that gene ID.
 #' @param gene_2_group Long form dataframe mapping which group a gene belongs to. Genes can appear multiple times belonging to different groups.
 #' Column 1 should be the gene ID and column two is the grouping variable.
-#' @param pAdj_method P-value adjustment method. Takes any value from the 'p.adjust()' function.
+#' @param pAdj_method P-value adjustment method. Takes any value from the `p.adjust()`` function
+#' @param p_cutoff P-value threshold that values must be less than or equal to
 #' @keywords helper
 #' @export
 #' @examples
