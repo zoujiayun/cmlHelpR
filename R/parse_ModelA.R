@@ -1,6 +1,7 @@
 #' Parse BEB output from ModelA codeml output
 #'
-#' General run down of what it does
+#' Extracts the BEB information from ModelA codeml output files.
+#' Uses anchors specific to Model A to parse data.
 #' @param lines List of codeml output files
 #' @param c number of cores
 #' @keywords internal
