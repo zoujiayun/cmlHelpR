@@ -35,10 +35,10 @@ That is to say, the same sequences in each of the species hits the equivalent se
 **Usage**:
 ```
 > out <- getOrthologueHeaders(crbb_path = "path/to/crbb/out", 
-                                           crbb_ext = ".tsv", 
-                                           sample_separator = "_", 
-                                           id_pct = 95, 
-                                           aln_pct = 90)
+                              crbb_ext = ".tsv", 
+                              sample_separator = "_", 
+                              id_pct = 95, 
+                              aln_pct = 90)
 ```
 
 **Output**:
@@ -90,11 +90,11 @@ As the name suggests, this function writes multi-fasta files using the table fro
 
 ```
 > writeFasta(orthologies = tbl_lst, 
-                           fasta_dir = "/path/to/sequence_fastas", 
-                           pep_ext = ".pep", 
-                           nuc_ext = ".fa", 
-                           pep_out = "/path/to/peptide/outDir", 
-                           nuc_out = "/path/to/nucleotide/outDir")
+             fasta_dir = "/path/to/sequence_fastas", 
+             pep_ext = ".pep", 
+             nuc_ext = ".fa", 
+             pep_out = "/path/to/peptide/outDir", 
+             nuc_out = "/path/to/nucleotide/outDir")
 ```
 
 **Output**
