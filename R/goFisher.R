@@ -74,7 +74,7 @@ goFisher <- function(gene_2_go, gene_2_group, pAdj_method, p_cutoff){
 
   ## Adjusted p-value cut-off
   if(!is.null(p_cutoff)){
-    out <- filter(.data = out, adjP <= p_cutoff)
+    out <- dplyr::filter(.data = out, adjP <= p_cutoff)
   }
 
   return(out)
