@@ -12,7 +12,7 @@
 #' @export
 #' @examples
 #' write_fasta(orthologs = listObj, fasta_dir = "path/to/fasta/directory", nuc_ext = ".fna", pep_ext = ".pep", nuc_out = "path/to/nuc_out/dir", pep_out = "/path/to/pep_out/dir", stop_codon = "*")
-writeFasta <- function(orthologs, fasta_dir, pep_ext, nuc_ext, pep_out, nuc_out, stop_codon = "."){
+writeFasta <- function(orthologs, fasta_dir, pep_ext, nuc_ext, pep_out, nuc_out, stop_codon = ".", write_file = TRUE){
 
   ## Create output directories
   print("Creating output dirs")
@@ -67,24 +67,35 @@ writeFasta <- function(orthologs, fasta_dir, pep_ext, nuc_ext, pep_out, nuc_out,
       nuc_temp <- set_names(x = nuc_temp, nm = data[["file_name"]])
       nuc_temp <- Biostrings::AAStringSetList(nuc_temp)@unlistData
 
-      ## Check if file already exists - delete if it does
-      if(file.exists(paste0(pep_out, "/", file_name, ".fasta"))) file.remove(paste0(pep_out, "/", file_name, ".fasta"))
-      if(file.exists(paste0(nuc_out, "/", file_name, ".fasta"))) file.remove(paste0(nuc_out, "/", file_name, ".fasta"))
-
-      ## Create file
-      file.create(paste0(pep_out, "/", file_name, ".fasta"))
-      file.create(paste0(nuc_out, "/", file_name, ".fasta"))
-
-      ## Write file
-      Biostrings::writeXStringSet(x = pep_temp, filepath = paste0(pep_out, "/", file_name, ".fasta"), append = TRUE)
-      Biostrings::writeXStringSet(x = nuc_temp, filepath = paste0(nuc_out, "/", file_name, ".fasta"), append = TRUE)
-
       ## Preparing return object
-      list(peptide = pep_temp, nucleotide = nuc_temp, internalStop = FALSE)
+      lst <- list(peptide = pep_temp, nucleotide = nuc_temp, internalStop = FALSE)
+
+      ## If write_file == TRUE - go ahead and write the file
+      if(isTRUE(write_file)){
+
+        ## Check if file already exists - delete if it does
+        if(file.exists(paste0(pep_out, "/", file_name, ".fasta"))) file.remove(paste0(pep_out, "/", file_name, ".fasta"))
+        if(file.exists(paste0(nuc_out, "/", file_name, ".fasta"))) file.remove(paste0(nuc_out, "/", file_name, ".fasta"))
+
+        ## Create file
+        file.create(paste0(pep_out, "/", file_name, ".fasta"))
+        file.create(paste0(nuc_out, "/", file_name, ".fasta"))
+
+        ## Write file
+        Biostrings::writeXStringSet(x = pep_temp, filepath = paste0(pep_out, "/", file_name, ".fasta"), append = TRUE)
+        Biostrings::writeXStringSet(x = nuc_temp, filepath = paste0(nuc_out, "/", file_name, ".fasta"), append = TRUE)
+
+        ## Returning summary of sequence
+        return(lst)
+
+      } else{
+        return(lst)
+      }
 
     } else {
 
-      list(peptide = pep_temp, internalStop = TRUE)
+      lst <- list(peptide = pep_temp, internalStop = TRUE)
+      return(lst)
 
     }
 
