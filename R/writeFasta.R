@@ -8,10 +8,18 @@
 #' @param pep_out Path to output directory for peptide files
 #' @param nuc_out Path to output directory for nucleotide files
 #' @param stop_codon Character that is used to specify what a stop codon is in your sequence. Defaul = "."
+#' @param write_file Set as `FALSE`` if you do not want to write fasta files. Default is TRUE
 #' @keywords write fasta, by-gene
 #' @export
 #' @examples
-#' write_fasta(orthologs = listObj, fasta_dir = "path/to/fasta/directory", nuc_ext = ".fna", pep_ext = ".pep", nuc_out = "path/to/nuc_out/dir", pep_out = "/path/to/pep_out/dir", stop_codon = "*")
+#' writeFasta(orthologs = listObj,
+#' fasta_dir = "path/to/fasta/directory",
+#' nuc_ext = ".fna",
+#' pep_ext = ".pep",
+#' nuc_out = "path/to/nuc_out/dir",
+#' pep_out = "/path/to/pep_out/dir",
+#' stop_codon = "*",
+#' write_file = FALSE)
 writeFasta <- function(orthologs, fasta_dir, pep_ext, nuc_ext, pep_out, nuc_out, stop_codon = ".", write_file = TRUE){
 
   ## Create output directories
