@@ -15,7 +15,4 @@
 Calcualtes LRT statistic between two models, where one belongs to Branch/Clade/Branch-site and the other
 to Null/Site. Name derived from "half-n-half".
 }
-\examples{
-.lrt_hnh(df = df.long, mdl = c("ModelA1", "M1a"))
-}
 \keyword{internal}

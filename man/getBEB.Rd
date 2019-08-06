@@ -21,7 +21,10 @@ getBEB(dir_path, models, sig = NULL, cores = 1, ext = ".out")
 Extracts all sites reported in the Bayes Empiracle Bayes section of the codeml output as a dataframe object
 }
 \examples{
-getBEB(dir_path = "path/to/parent_out", models = c("M2a", "M8", "ModelA"), sig = 0.1, cores = 4, ext = ".customOut")
+getBEB(dir_path = "path/to/parent_out",
+models = c("M2a", "M8", "ModelA"),
+sig = 0.1, cores = 4,
+ext = ".customOut")
 }
 \keyword{Bayes,}
 \keyword{empiracle,}

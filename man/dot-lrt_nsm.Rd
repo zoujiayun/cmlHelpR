@@ -14,7 +14,4 @@
 \description{
 Builds a table from the np/lnL data and runs an LRT analysis between two models.
 }
-\examples{
-.lrt_nsm(df = df.long, mdl = c("M1a", "M2a"))
-}
 \keyword{internal}

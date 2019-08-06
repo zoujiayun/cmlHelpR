@@ -14,7 +14,4 @@
 \description{
 Builds a table from the np/lnL data and runs an LRT analysis between two models.
 }
-\examples{
-.lrt_bcm(df = df, mdl = c("CmC", "M2a_Rel"))
-}
 \keyword{internal}

@@ -5,7 +5,7 @@
 \title{Writes a multi-fasta file by gene for n-species}
 \usage{
 writeFasta(orthologs, fasta_dir, pep_ext, nuc_ext, pep_out, nuc_out,
-  stop_codon = ".")
+  stop_codon = ".", write_file = TRUE)
 }
 \arguments{
 \item{orthologs}{Output object from `getOrthologueHeaders()` function}
@@ -21,12 +21,21 @@ writeFasta(orthologs, fasta_dir, pep_ext, nuc_ext, pep_out, nuc_out,
 \item{nuc_out}{Path to output directory for nucleotide files}
 
 \item{stop_codon}{Character that is used to specify what a stop codon is in your sequence. Defaul = "."}
+
+\item{write_file}{Set as `FALSE`` if you do not want to write fasta files. Default is TRUE}
 }
 \description{
 This function creates fasta files for each gene sequence from the orthologue table (`getOrthologueHeaders``).
 }
 \examples{
-write_fasta(orthologs = listObj, fasta_dir = "path/to/fasta/directory", nuc_ext = ".fna", pep_ext = ".pep", nuc_out = "path/to/nuc_out/dir", pep_out = "/path/to/pep_out/dir", stop_codon = "*")
+writeFasta(orthologs = listObj,
+fasta_dir = "path/to/fasta/directory",
+nuc_ext = ".fna",
+pep_ext = ".pep",
+nuc_out = "path/to/nuc_out/dir",
+pep_out = "/path/to/pep_out/dir",
+stop_codon = "*",
+write_file = FALSE)
 }
 \keyword{by-gene}
 \keyword{fasta,}

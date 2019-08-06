@@ -9,9 +9,9 @@ getFreq(df_long, significant = NULL, site_as_prop = NULL)
 \arguments{
 \item{df_long}{Long form data frame from the getBEB() function}
 
-\item{site_as_prop}{Return frequencies values as a proportion of the genes length instead of simple counts}
+\item{significant}{Set to TRUE to select only significant sites}
 
-\item{only_signif}{Set to TRUE to select only significant sites}
+\item{site_as_prop}{Return frequencies values as a proportion of the genes length instead of simple counts}
 }
 \description{
 Creates a frequency table based on the parsed output from the getBEB() function in the cmlHelpR package.
