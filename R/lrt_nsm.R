@@ -5,8 +5,6 @@
 #' @param mdl Vector of two null/site models for comparison
 #' @keywords internal
 #' @export
-#' @examples
-#' .lrt_nsm(df = df.long, mdl = c("M1a", "M2a"))
 .lrt_nsm <- function(df, mdl){
 
   ## Parsing input dataframe

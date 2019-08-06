@@ -6,8 +6,6 @@
 #' @param mdl Vector of models for LRT statistic
 #' @keywords internal
 #' @export
-#' @examples
-#' .lrt_hnh(df = df.long, mdl = c("ModelA1", "M1a"))
 .lrt_hnh <- function(df, mdl){
   o <- dplyr::filter(.data = df, stringr::str_detect(string = model, pattern = paste0(mdl, "$", collapse = "|")))
 

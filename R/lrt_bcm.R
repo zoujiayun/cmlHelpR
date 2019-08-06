@@ -5,8 +5,6 @@
 #' @param mdl Branch/clade/branch-site models to compare
 #' @keywords internal
 #' @export
-#' @examples
-#' .lrt_bcm(df = df.long, mdl = c("CmC", "M2a_Rel"))
 .lrt_bcm <- function(df, mdl){
 
   ## Subset long-format dataframe for clade/brach/-site models
