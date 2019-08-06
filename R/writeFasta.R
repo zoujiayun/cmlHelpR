@@ -46,7 +46,7 @@ writeFasta <- function(orthologs, fasta_dir, pep_ext, nuc_ext, pep_out, nuc_out,
     })
 
     ## Assigning names and returning biostrings set
-    pep_temp <- set_names(x = pep_temp, nm = data[["file_name"]])
+    pep_temp <- magrittr::set_names(x = pep_temp, nm = data[["file_name"]])
     pep_temp <- Biostrings::AAStringSetList(pep_temp)@unlistData
 
     ## Any stop codons?
@@ -64,7 +64,7 @@ writeFasta <- function(orthologs, fasta_dir, pep_ext, nuc_ext, pep_out, nuc_out,
       })
 
       ## Assigning names and returning biostrings set
-      nuc_temp <- set_names(x = nuc_temp, nm = data[["file_name"]])
+      nuc_temp <- magrittr::set_names(x = nuc_temp, nm = data[["file_name"]])
       nuc_temp <- Biostrings::AAStringSetList(nuc_temp)@unlistData
 
       ## Preparing return object
@@ -107,3 +107,10 @@ writeFasta <- function(orthologs, fasta_dir, pep_ext, nuc_ext, pep_out, nuc_out,
   return(out)
 
 }
+
+
+
+
+
+
+
