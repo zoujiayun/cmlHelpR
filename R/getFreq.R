@@ -52,5 +52,3 @@ getFreq <- function(df_long, significant = NULL, site_as_prop = NULL) {
   return(lst)
 
 }
-
-t <- getFreq(df_long = beb_sig$long, significant = TRUE, site_as_prop = TRUE)
