@@ -7,6 +7,7 @@
 #' @param pAdj_method P-value adjustment method. Takes any value from the `p.adjust()`` function
 #' @param p_cutoff P-value threshold that values must be less than or equal to
 #' @keywords helper
+#' @importFrom rlang .data
 #' @export
 #' @examples
 #' goFisher(gene_2_go = df.genes2go, gene_2_group = df.genes2group ,pAdj_method = "bonferroni")
@@ -29,7 +30,7 @@ goFisher <- function(gene_2_go, gene_2_group, pAdj_method, p_cutoff){
   ## Frequency of GO term WITHIN CONDITION
   df_cluster_go <- tidyr::nest(data = dplyr::group_by_at(.tbl = gene_2_group, 2), .key = "genes_in_condition") ## Genes in group
   df_cluster_go <- dplyr::mutate(.data = df_cluster_go,
-                                 genes_cluster_GOID = purrr::map(genes_in_condition, ~{     ## Iterate over genes in each condition
+                                 genes_cluster_GOID = purrr::map(.data$genes_in_condition, ~{     ## Iterate over genes in each condition
                                    t <- dplyr::left_join(x = .x, gene_2_go)                 ## Getting GO terms for each gene in group
                                    t <- dplyr::group_by_at(.tbl = t, 2)                     ## Grouping data by GO term
                                    t <- dplyr::tally(x = t, name = "inClust_nGene_withGO")    ## Frequency of GO term within grouping - More terms than genes as genes can have MULTIPLE GO terms associated with it
@@ -45,36 +46,36 @@ goFisher <- function(gene_2_go, gene_2_group, pAdj_method, p_cutoff){
 
   ## Dealing with doubling up: Subtracting gene in group from total
   df_build_from <- dplyr::mutate(.data = df_build_from,                                        ## Subtracting gene groupings from total
-                                 nGene_remain = nGenes_total - nGene_group,                    ## This should remove the genes in the group from the total
-                                 outClust_nGene_withGO = nGO_total - inClust_nGene_withGO,     ## meaning we're not doubling up on genes in the group AND
-                                 inClust_nGene_outGO = nGene_group - inClust_nGene_withGO,     ## in the total.
-                                 outClust_nGene_outGO = nGene_remain - outClust_nGene_withGO)
+                                 nGene_remain = nGenes_total - .data$nGene_group,                    ## This should remove the genes in the group from the total
+                                 outClust_nGene_withGO = nGO_total - .data$inClust_nGene_withGO,     ## meaning we're not doubling up on genes in the group AND
+                                 inClust_nGene_outGO = .data$nGene_group - .data$inClust_nGene_withGO,     ## in the total.
+                                 outClust_nGene_outGO = .data$nGene_remain - .data$outClust_nGene_withGO)
   df_build_from <- tidyr::drop_na(data = df_build_from)                                        ## Don't care about NA as this represents no GO term
   df_build_from <- dplyr::select(df_build_from,
-                                 c(1,3), -nGene_group,
-                                 inClust_nGene_withGO, outClust_nGene_withGO,
-                                 inClust_nGene_outGO, outClust_nGene_outGO)
+                                 c(1,3), -.data$nGene_group,
+                                 .data$inClust_nGene_withGO, .data$outClust_nGene_withGO,
+                                 .data$inClust_nGene_outGO, .data$outClust_nGene_outGO)
 
   ## Fishers Exact Test
   out <- dplyr::group_by_at(.tbl = df_build_from, c(1,2))
   out <- tidyr::nest(data = out)
   out <- dplyr::mutate(.data = out,
-                       fisher = purrr::map(.x = data, ~{fisher.test(x = matrix(data = unlist(.x), nrow = 2), alternative = "two.sided")}),  ## Fisher test
-                       pVal = unlist(purrr::map(fisher, ~{.x["p.value"]})),                                                                 ## Extracting p-value
-                       conf_low = unlist(purrr::map(fisher, ~{.x[["conf.int"]][1]})),                                                       ## Confidence intervals
-                       conf_high = unlist(purrr::map(fisher, ~{.x[["conf.int"]][2]})),
-                       OR = unlist(purrr::map(fisher, ~{.x["estimate"]})))                                                                  ## Odds ratio
+                       fisher = purrr::map(.x = .data$data, ~{fisher.test(x = matrix(data = unlist(.x), nrow = 2), alternative = "two.sided")}),  ## Fisher test
+                       pVal = unlist(purrr::map(.data$fisher, ~{.x["p.value"]})),                                                                 ## Extracting p-value
+                       conf_low = unlist(purrr::map(.data$fisher, ~{.x[["conf.int"]][1]})),                                                       ## Confidence intervals
+                       conf_high = unlist(purrr::map(.data$fisher, ~{.x[["conf.int"]][2]})),
+                       OR = unlist(purrr::map(.data$fisher, ~{.x["estimate"]})))                                                                  ## Odds ratio
 
   ## Statistical correction
-  out <- dplyr::group_by(.data = out, group)            ## Grouping to limit correction to group - not to all samples
-  out <- dplyr::mutate(.data = out, adjP = p.adjust(p = pVal, method = pAdj_method))  ## Correcting using p.adjust
+  out <- dplyr::group_by(.data = out, .data$group)            ## Grouping to limit correction to group - not to all samples
+  out <- dplyr::mutate(.data = out, adjP = stats::p.adjust(p = .data$pVal, method = pAdj_method))  ## Correcting using p.adjust
   out <- dplyr::select(out, 1, 2, 5, 9, 6, 7, 8, dplyr::everything())     ## Arrange columns
-  out <- dplyr::arrange(.data = out, adjP)                         ## Sort by group and adjusted-p
+  out <- dplyr::arrange(.data = out, .data$adjP)                         ## Sort by group and adjusted-p
   out <- dplyr::ungroup(out)
 
   ## Adjusted p-value cut-off
   if(!is.null(p_cutoff)){
-    out <- dplyr::filter(.data = out, adjP <= p_cutoff)
+    out <- dplyr::filter(.data = out, .data$adjP <= p_cutoff)
   }
 
   return(out)
