@@ -5,6 +5,7 @@
 #' @param models Vector of models to extract p/w information from
 #' @param ext Extension of output files
 #' @keywords parse
+#' @importFrom rlang .data
 #' @export
 #' @examples
 #' getPW(dir_path = "path/to/codeml_out", models = c("ModelA", "M1a", "M8"), ext = ".custom.out")
@@ -184,7 +185,7 @@ getPW <- function(dir_path, models, ext=".out") {
     if(.x == "M2a_Rel"){
 
       t <- tidyr::separate(data = lst[[.x]], col = "model_gene_tree", into = c("model", "gene", "tree"), sep = "_", extra = "merge")
-      t <- tidyr::unite(t, col = model, model, gene)
+      t <- tidyr::unite(data = t, col = .data$model, .data$model, .data$gene)
       t <- tidyr::separate(data = t, col = "tree", into = c("gene", "tree"), sep = "_")
       return(t)
 
@@ -196,7 +197,7 @@ getPW <- function(dir_path, models, ext=".out") {
   names(lst) <- names(f)
 
   ## Group and nest for easy access
-  nest <- purrr::map(lst, dplyr::group_by, model, gene, tree)
+  nest <- purrr::map(lst, dplyr::group_by, .data$model, .data$gene, .data$tree)
   nest <- purrr::map(nest, tidyr::nest)
 
   out <- list(long_list = lst, nested_list = nest)
