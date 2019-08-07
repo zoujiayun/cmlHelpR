@@ -14,6 +14,7 @@
 #' @param id_pct Percentage identity between hits
 #' @param aln_pct Proportion of query/target that needs to be accounted for in BLAST alignment portion
 #' @keywords helper
+#' @importFrom rlang .data
 #' @export
 #' @examples
 #' getOrthologHeaders(crbb_path = "path/to/directory",
@@ -71,11 +72,11 @@ getOrthologHeaders <- function(crbb_path, crbb_ext, sample_separator, id_pct, al
   orth_df <- tidyr::unite(data = orth_df,                          ## Uniting gene symbol columns to generate file name column
                         col = "file_name",
                         dplyr::starts_with(match = "gene_"), sep = "-")
-  orth_df <- dplyr::select(.data = orth_df, file_name, dplyr::everything()) ## Ordering the output
+  orth_df <- dplyr::select(.data = orth_df, .data$file_name, dplyr::everything()) ## Ordering the output
 
   ## Building list output
   nested <- tidyr::gather(data = orth_df, key = "sample", value = "header", 2:ncol(orth_df))
-  nested <- dplyr::group_by(.data = nested, file_name)
+  nested <- dplyr::group_by(.data = nested, .data$file_name)
   nested <- tidyr::nest(data = nested)
 
   out <- list(wide_format = orth_df, nested_format = nested)
