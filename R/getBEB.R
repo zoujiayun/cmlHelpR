@@ -7,6 +7,7 @@
 #' @param cores Number of cores to parallelise over
 #' @param ext Extension of CODEML output files
 #' @keywords Bayes, empiracle, Bayes, parse
+#' @importFrom rlang .data
 #' @export
 #' @examples
 #' getBEB(dir_path = "path/to/parent_out",
@@ -60,8 +61,8 @@ getBEB <- function(dir_path, models, sig = NULL, cores = 1, ext = ".out") {
   ## Single tibble
   beb <- magrittr::set_names(x = beb, value = names(f))
   beb <- dplyr::bind_rows(beb, .id = "model")
-  beb <- tidyr::separate(data = beb, col = id, into = c("gene", "tree"), sep = "_")
-  beb <- dplyr::mutate(.data = beb, tree = stringr::str_replace_na(string = tree, replacement = "base"))
+  beb <- tidyr::separate(data = beb, col = .data$id, into = c("gene", "tree"), sep = "_")
+  beb <- dplyr::mutate(.data = beb, tree = stringr::str_replace_na(string = .data$tree, replacement = "base"))
 
   print("Getting no-gap-length value")
   alnLength <- purrr::map(f[[1]], ~{
@@ -80,12 +81,12 @@ getBEB <- function(dir_path, models, sig = NULL, cores = 1, ext = ".out") {
 
   ## Significance filtering
   if(!is.null(sig)){
-    beb <- dplyr::filter(.data = beb, pval <= sig)
+    beb <- dplyr::filter(.data = beb, .data$pval <= sig)
   }
 
   # ## Return a list object of long form and nested
   lst <- split(x = beb, beb[["model"]])
-  nst <- dplyr::group_by(.data = beb, model)
+  nst <- dplyr::group_by(.data = beb, .data$model)
   nst <- tidyr::nest(data = nst, .key = "BEB")
 
   o <- list(long = beb, list = lst, nested = nst)
