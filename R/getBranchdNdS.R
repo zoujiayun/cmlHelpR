@@ -6,6 +6,7 @@
 #' @param models Models to get branch dN/dS values for
 #' @param ext Extension of CODEML output files
 #' @keywords helper
+#' @importFrom rlang .data
 #' @export
 #' @examples
 #' getBranchdNdS(dir_path = list.files(path = "path/to/codeml/outDir", models = c("M1a", "M8")))
@@ -33,7 +34,7 @@ getBranchDNDS <- function(dir_path, models, ext = ".out") {
 
     subString <- .x[grep(pattern = "^ branch", x = .x):length(.x)]
 
-    end <- str_locate(string = subString, pattern = "")[,1]
+    end <- stringr::str_locate(string = subString, pattern = "")[,1]
     end <- which(is.na(end))[2]
 
     out <- trimws(x = subString[1:end], which = "left")
@@ -44,10 +45,10 @@ getBranchDNDS <- function(dir_path, models, ext = ".out") {
 
   ## Build dataframe - nested
   df <- dplyr::bind_rows(d, .id = "id")
-  df <- tidyr::separate(data = df, col = id, into = c("model", "gene_tree"), sep = "::")
-  df <- tidyr::separate(data = df, col = gene_tree, into = c("gene", "tree"), sep = "_")
-  df <- dplyr::mutate(.data = df, tree = dplyr::if_else(is.na(tree), "base", tree))
-  df <- dplyr::group_by(.data = df, model, gene, tree)
+  df <- tidyr::separate(data = df, col = .data$id, into = c("model", "gene_tree"), sep = "::")
+  df <- tidyr::separate(data = df, col = .data$gene_tree, into = c("gene", "tree"), sep = "_")
+  df <- dplyr::mutate(.data = df, tree = dplyr::if_else(is.na(.data$tree), "base", .data$tree))
+  df <- dplyr::group_by(.data = df, .data$model, .data$gene, .data$tree)
   df <- tidyr::nest(data = df, .key = "branch")
 
   ## Return list + dataframe
