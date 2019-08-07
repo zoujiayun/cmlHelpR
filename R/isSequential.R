@@ -7,18 +7,19 @@
 #' @param beb_long Long form BEB table from getBEB() function
 #' @param distance_threshold Report sites that are within this proximity to other reported sites under selection
 #' @keywords helper
+#' @importFrom rlang .data
 #' @export
 #' @examples
 #' isSequential(beb_long = df.beb, distance_threshold = 1)
 isSequential <- function(beb_long, distance_threshold){
 
   ## Nesting long-form data
-  nst <- dplyr::group_by(.data = beb_long, model, gene, tree)
+  nst <- dplyr::group_by(.data = beb_long, .data$model, .data$gene, .data$tree)
   nst <- tidyr::nest(data = nst)
 
   ## Sites that fall within proximity threshold (close to other sites under slection)
   nst <- dplyr::mutate(.data = nst,
-                       within_threshold = purrr::map(data, ~{
+                       within_threshold = purrr::map(.data$data, ~{
 
                          pos <- .x[["pos"]] ## Positions
                          rn <- 1:nrow(.x) ## Row number used as position name
@@ -41,7 +42,7 @@ isSequential <- function(beb_long, distance_threshold){
 
   ## Sites outside of proximity distance (dispersed)
   nst <- dplyr::mutate(.data = nst,
-                       confident_sites = purrr::map(data, ~{
+                       confident_sites = purrr::map(.data$data, ~{
 
                          pos <- .x[["pos"]]
                          rn <- 1:nrow(.x)
