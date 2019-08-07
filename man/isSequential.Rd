@@ -17,7 +17,4 @@ fall within a specified distance of each other. For example, if you have two sit
 under selection, but they are the two amino acids next to each other, both sites would be reported
 if the distance_threshold was set to '1'.
 }
-\examples{
-isSequential(beb_long = df.beb, distance_threshold = 1)
-}
 \keyword{helper}

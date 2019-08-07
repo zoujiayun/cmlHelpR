@@ -17,7 +17,4 @@ getBranchDNDS(dir_path, models, ext = ".out")
 Given the path to the parallel_codeml output directory, this function will parse the branch dN/dS values from the
 CODEML output. It returns a list and nested dataframe object of dN/dS values for each file.
 }
-\examples{
-getBranchdNdS(dir_path = list.files(path = "path/to/codeml/outDir", models = c("M1a", "M8")))
-}
 \keyword{helper}

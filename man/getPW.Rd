@@ -16,7 +16,4 @@ getPW(dir_path, models, ext = ".out")
 \description{
 Extracts the p and w lines from codeml output and stores it in a list/data frame object
 }
-\examples{
-getPW(dir_path = "path/to/codeml_out", models = c("ModelA", "M1a", "M8"), ext = ".custom.out")
-}
 \keyword{parse}

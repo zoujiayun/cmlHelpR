@@ -27,16 +27,6 @@ writeFasta(orthologs, fasta_dir, pep_ext, nuc_ext, pep_out, nuc_out,
 \description{
 This function creates fasta files for each gene sequence from the orthologue table (`getOrthologueHeaders``).
 }
-\examples{
-writeFasta(orthologs = listObj,
-fasta_dir = "path/to/fasta/directory",
-nuc_ext = ".fna",
-pep_ext = ".pep",
-nuc_out = "path/to/nuc_out/dir",
-pep_out = "/path/to/pep_out/dir",
-stop_codon = "*",
-write_file = FALSE)
-}
 \keyword{by-gene}
 \keyword{fasta,}
 \keyword{write}

@@ -19,7 +19,4 @@ Column 1 should be the gene ID and column two is the grouping variable.}
 \description{
 Conducts a Fisher's exact test on a 2x2 contigency table of presence/absence of GO terms for grouped data.
 }
-\examples{
-goFisher(gene_2_go = df.genes2go, gene_2_group = df.genes2group ,pAdj_method = "bonferroni")
-}
 \keyword{helper}

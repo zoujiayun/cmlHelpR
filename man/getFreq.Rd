@@ -16,8 +16,5 @@ getFreq(df_long, significant = NULL, site_as_prop = NULL)
 \description{
 Creates a frequency table based on the parsed output from the getBEB() function in the cmlHelpR package.
 }
-\examples{
-getFreq(df_long = df.beb, significant = TRUE, site_as_prop = TRUE)
-}
 \keyword{frequency}
 \keyword{table}

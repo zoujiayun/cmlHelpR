@@ -27,11 +27,4 @@ CRBB files need to have the filenaming structure as follows; sampleA_sampleB.ext
 to be present in the file name, separated by some kind of delimeter. The delimiter does not matter, as you can
 specify this at the function call.
 }
-\examples{
-getOrthologHeaders(crbb_path = "path/to/directory",
-crbb_ext = ".tsv",
-sample_separator = "__",
-id_pct = 95,
-aln_pct = 90)
-}
 \keyword{helper}
