@@ -7,8 +7,6 @@
 #' @keywords frequency table
 #' @importFrom rlang .data
 #' @export
-#' @examples
-#' getFreq(df_long = df.beb, significant = TRUE, site_as_prop = TRUE)
 getFreq <- function(df_long, significant = NULL, site_as_prop = NULL) {
 
   ## Filtering on significance

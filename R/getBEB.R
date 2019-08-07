@@ -9,11 +9,6 @@
 #' @keywords Bayes, empiracle, Bayes, parse
 #' @importFrom rlang .data
 #' @export
-#' @examples
-#' getBEB(dir_path = "path/to/parent_out",
-#' models = c("M2a", "M8", "ModelA"),
-#' sig = 0.1, cores = 4,
-#' ext = ".customOut")
 getBEB <- function(dir_path, models, sig = NULL, cores = 1, ext = ".out") {
 
   ## Models with BEB output

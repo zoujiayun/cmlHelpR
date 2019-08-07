@@ -7,9 +7,6 @@
 #' @param comp_list Model combinations as a list of vectors
 #' @param ext Extension of CODEML output files. Defaults to ".out"
 #' @export
-#' @examples
-#' lrt_statistic(dir_path = "path/to/codeml_out",
-#' comp_list = list(c("M1a", "M2a"), c("TwoRatio", "M0")))
 lrtStatistic <- function(dir_path, comp_list, ext = ".out") {
 
   ## Models

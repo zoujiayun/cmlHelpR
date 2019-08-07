@@ -16,12 +16,6 @@
 #' @keywords helper
 #' @importFrom rlang .data
 #' @export
-#' @examples
-#' getOrthologHeaders(crbb_path = "path/to/directory",
-#' crbb_ext = ".tsv",
-#' sample_separator = "__",
-#' id_pct = 95,
-#' aln_pct = 90)
 getOrthologHeaders <- function(crbb_path, crbb_ext, sample_separator, id_pct, aln_pct) {
 
   ## Column names of CRBB output

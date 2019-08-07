@@ -9,8 +9,6 @@
 #' @keywords helper
 #' @importFrom rlang .data
 #' @export
-#' @examples
-#' isSequential(beb_long = df.beb, distance_threshold = 1)
 isSequential <- function(beb_long, distance_threshold){
 
   ## Nesting long-form data

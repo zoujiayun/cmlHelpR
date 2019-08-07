@@ -8,8 +8,6 @@
 #' @keywords helper
 #' @importFrom rlang .data
 #' @export
-#' @examples
-#' getBranchdNdS(dir_path = list.files(path = "path/to/codeml/outDir", models = c("M1a", "M8")))
 getBranchDNDS <- function(dir_path, models, ext = ".out") {
 
   ## Check: do the models provided match all contain branch dN/dS values

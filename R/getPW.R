@@ -7,8 +7,6 @@
 #' @keywords parse
 #' @importFrom rlang .data
 #' @export
-#' @examples
-#' getPW(dir_path = "path/to/codeml_out", models = c("ModelA", "M1a", "M8"), ext = ".custom.out")
 getPW <- function(dir_path, models, ext=".out") {
 
   ## Models that have p/w rows in some form

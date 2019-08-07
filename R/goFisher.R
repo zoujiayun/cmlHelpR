@@ -9,8 +9,6 @@
 #' @keywords helper
 #' @importFrom rlang .data
 #' @export
-#' @examples
-#' goFisher(gene_2_go = df.genes2go, gene_2_group = df.genes2group ,pAdj_method = "bonferroni")
 goFisher <- function(gene_2_go, gene_2_group, pAdj_method, p_cutoff){
 
   ## Improvement: Join both inputs into one dataframe that is then parsed. Should
