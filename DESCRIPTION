@@ -19,6 +19,7 @@ Imports:
   parallel,
   purrr,
   readr,
+  rlang,
   stringr,
   tibble,
   tidyr
