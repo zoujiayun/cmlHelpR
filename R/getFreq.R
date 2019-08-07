@@ -17,7 +17,7 @@ getFreq <- function(df_long, significant = NULL, site_as_prop = NULL) {
   ## Getting frequency
   df <- dplyr::mutate(.data = df_long, id = dplyr::if_else(rowSums(is.na(df_long[4:10])) == 7, 0, 1))
   df <- dplyr::group_by(.data = df, .data$model, .data$gene, .data$tree, .data$id, .data$seqLen)
-  df <- tidyr::nest(data = df, .key = df$fbeb)
+  df <- tidyr::nest(data = df, .key = df$beb)
   df <- dplyr::mutate(.data = df, freq = unlist(purrr::map(.data$beb, dplyr::tally)))
   df <- dplyr::mutate(.data = df, freq = .data$id * .data$freq)
   df <- dplyr::select(.data = df, .data$model, .data$gene, .data$tree, .data$freq, .data$seqLen)
