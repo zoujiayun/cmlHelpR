@@ -8,7 +8,9 @@ In the sections below I'll demonstrate some use cases of the major functions of 
 
 # In development
 
-- Probably a lot
+- Need to add data checks to **ALL** functions. The below are known to have issues with zero index when the regex isn't in the file (incomplete file)
+  - `getPW()`
+  - `getBranchdNdS()`
 
 # Installation
 In the `R-studio` console, execute the following code.
