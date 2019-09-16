@@ -1,8 +1,8 @@
 # cmlHelpR
 
-This package and repository is a simple way for me to collect functions I've written to analyses `CODEML` output. 
+This package and repository is a simple way for me to collect functions I've written to analyse CodeML output from my [parallel_codeml](https://github.com/a-lud/parallel_codeml) pipeline.
 
-The functions are continually being tweaked, and in many instances serve a specific purpose for what I am trying to do. Nevertheless, I've endeavoured to make the functions as extensible as possible.
+The functions are continually being tweaked, and in many instances serve a specific purpose for what I am trying to accomplish. Nevertheless, I've endeavoured to make the functions extensible to some degree.
 
 In the sections below I'll demonstrate some use cases of the major functions of interest.
 
@@ -22,24 +22,24 @@ In the `R-studio` console, execute the following code.
 
 # Tutorial
 
-I have included below a few examples of how to use the main package functions. I'll try and include what the starting data looks like and what the output is.
+Below are a few examples of how to use the main package functions. I'll try and include what the starting data looks like and what the output is.
 
 ## Function: getOrthologHeaders()
 
-This function builds the sequencee header - gene filename table. Using the Conditional Reciprocal Best Blast (CRBB) output, it identifies CRBB-hits across all sample comparisons and joins consistent CRBBs. 
+This function builds the sequencee header/gene filename table. Using the Conditional Reciprocal Best Blast (CRBB) output, it identifies CRBB-hits across all sample comparisons and joins consistent CRBBs on a common sample.
 
 For example, let's say we have three samples and are dealing with one sequence; *Gene-A*. A CRBB consistent across three samples would look like so
 
-`Sample 1 == Sample 1 == sample 3`
+`Sample 1 == Sample 2 == sample 3`
 
 That is to say, the same sequences in each of the species hits the equivalent sequence in the other two samples.
 
 **Usage**:
 ```
-> out <- getOrthologueHeaders(crbb_path = "path/to/crbb/out", 
-                              crbb_ext = ".tsv", 
-                              sample_separator = "_", 
-                              id_pct = 95, 
+> out <- getOrthologueHeaders(crbb_path = "path/to/crbb/out",
+                              crbb_ext = ".tsv",
+                              sample_separator = "_",
+                              id_pct = 95,
                               aln_pct = 90)
 ```
 
@@ -91,11 +91,11 @@ As the name suggests, this function writes multi-fasta files using the table fro
 **Usage**:
 
 ```
-> writeFasta(orthologies = tbl_lst, 
-             fasta_dir = "/path/to/sequence_fastas", 
-             pep_ext = ".pep", 
-             nuc_ext = ".fa", 
-             pep_out = "/path/to/peptide/outDir", 
+> writeFasta(orthologies = tbl_lst,
+             fasta_dir = "/path/to/sequence_fastas",
+             pep_ext = ".pep",
+             nuc_ext = ".fa",
+             pep_out = "/path/to/peptide/outDir",
              nuc_out = "/path/to/nucleotide/outDir")
 ```
 
@@ -110,14 +110,14 @@ Here, the output is both the fasta files being written in peptide/nucelotide for
 ```
 $peptide
   A AAStringSet instance of length 3
-    width seq                                                                                                                                                                                     names               
+    width seq                                                                                                                                                                                     names
 [1]   457 SPKAPSLFPLIPSGDNSETIDITIGCLAKNFLPDSIDFSWDNQQNQSIGNQNYIKFPSILSSGTYTAVSQAKVPRSTWDGFQLFYCKATH...WLQNEQPVSESVYFTSKAILESKIQSKGYFAYSMLNISEQEWSAGDSFTCVVGHEAFPYNSIQKTVNKNTGKPSIVNVSLVLSDTSTPCY Laevis
 [2]   480 MTIVHCDNWFDYWGKGTSVTVTAESPKAPSLFPLIPSGDNSETIDITIGCLAKNFLPDSIDFSWDNQRNQSIGNQNYIKFPSILSSGTYT...WLQNEQPVSESVYFTSKAILESKIQSKEYFAYSMLNINEQEWSAGDSFTCVVGHEALHYNSIQKTVNKNTGKPSIVNVSLVLSDTSTPCY Scutatus
 [3]   465 MVTVSSETPKAPSLFPLIPSGDNSETIDITIGCLAKNFLPDSIDFSWDNQRNESIGNQNYIKFPSILSSGTYTAVSQAKVPRSTWDEFQL...WLQNEQPVSESVYFTSKAISESKIQSKEYFAYSMLNISEQEWSAGDSFTCVVGHEALYYGSIQKTVNKNTGKPSIVNVSLVLSDTSTPCY Textilis
 
 $nucleotide
   A AAStringSet instance of length 3
-    width seq                                                                                                                                                                                     names               
+    width seq                                                                                                                                                                                     names
 [1]  1374 TCCCCAAAGGCCCCTTCTCTTTTCCCACTCATCCCATCTGGGGACAACTCAGAGACCATAGATATCACCATCGGATGTCTTGCCAAGAAT...ATTCAGAAGACTGTAAACAAGAACACGGGTAAACCATCCATAGTCAACGTCTCCTTAGTCCTCTCCGACACTTCCACCCCTTGCTATTAA Laevis
 [2]  1443 ATGACTATTGTTCATTGTGACAACTGGTTTGACTATTGGGGAAAAGGCACTTCAGTCACCGTTACTGCAGAATCCCCAAAGGCCccttct...ATTCAGAAGACTGTAAACAAGAACACGGGTAAACCATCCATAGTCAACGTCTCCTTAGTCCTCTCCGACACTTCCACCCCTTGCTATTAA Scutatus
 [3]  1398 ATGGTCACAGTCAGCTCAGAAACCCCAAAGGCCCCTTCTCTTTTCCCACTCATCCCATCTGGGGACAACTCAGAGACCATAGATATCACC...ATTCAGAAGACTGTAAACAAGAACACGGGTAAACCATCCATAGTCAACGTCTCCTTAGTCCTCTCCGACACTTCCACCCCTTGCTATTAA Textilis
@@ -128,7 +128,7 @@ $internalStop
 
 ## Function: lrtStatistic()
 
-The `lrtStatistic()` function calculates likelihood ratio tests betweeen two different evolutionary models. In the `Parallel Codeml` repository is an excel file describing which models should be compared (i.e. which models make sense to compare).
+The `lrtStatistic()` function calculates likelihood ratio tests betweeen two different evolutionary models. In the `parallel_codeml` repository is an excel file describing which models should be compared (i.e. which models make sense to compare).
 
 **Usage**:
 
@@ -164,7 +164,7 @@ In the example below I've given an example of three different model comparison c
 - ModelA1 - M1a == Branch-site vs site
 - CmC - M2a_Rel == Clade vs clade
 
-The main take away is that the site vs site comparison has no tree field. This is because a single tree representing the relationship between all samples is used for each site model. Therefore there are no tree replicates, meaning no tree field.
+The main take away is that the site vs site comparison has no tree field. This is because a single tree representing the relationship between all samples is used for each site model. Therefore there are no tree conditions, meaning no tree field.
 
 ```
 $`M2a-M1a`
@@ -178,7 +178,7 @@ $`ModelA1-M1a`
   gene           tree             np_ModelA1 np_M1a lnL_ModelA1 lnL_M1a      delta degFree  pval
   <chr>          <chr>                 <dbl>  <dbl>       <dbl>   <dbl>      <dbl>   <dbl> <dbl>
 1 RHOA-RHOA-RHOA brownForeground           8      7       -780.   -780. 0.00000200       1 0.999
-2 RHOA-RHOA-RHOA laevisForeground          8      7       -780.   -780. 0                1 1    
+2 RHOA-RHOA-RHOA laevisForeground          8      7       -780.   -780. 0                1 1
 3 RHOA-RHOA-RHOA tigerForeground           8      7       -780.   -780. 0.00000400       1 0.998
 
 $`CmC-M2a_Rel`
@@ -190,19 +190,21 @@ $`CmC-M2a_Rel`
 3 RHOA-RHOA-RHOA tigerForeground      10          9   -780.       -780.     0       1     1
 ```
 
+An LRT statistic is calculated between genes from each model, with the same gene appearing multiple times if it was run with multiple different tree combinations. Genes are always matched between models, with trees being matched also if they are present in each model.
+
 ## Function: getBEB()
 
 Bayes Empirical Bayes (BEB) data is reported for some models (e.g. ModelA, M2a and M8) which represents putative sites under selection. This function parses that information into an easy to use dataframe object that can be manipulated for down-stream analysis.
 
 **Usage**
 
-Input is simply the directory path to where the `CODEML` output is, the models you want to extract the BEB data for and the number of cores to parse the outputs with. It's important to note here that this function operates off the output directories having the name of their model. If you change the output directory names, e.g. to `M2a_first_output`, this function will not work.
+Input is simply the directory path to where the CodeML output is, the models you want to extract the BEB data for and the number of cores to parse the outputs with. It's important to note here that this function operates off the output directories having the name of their model. If you change the output directory names, e.g. to `M2a --> M2a_first_output`, this function will not work.
 
-I have written these scripts to work directly with the output of the `parallel codeml` pipeline. If you want to update them, by all means do.
+I have written these scripts to work directly with the output of the `parallel_codeml` pipeline. If you want to update them, by all means do.
 
 ```
-> beb <- getBEB(dir_path = "/path/to/codeml/output", 
-                models = c("M2a", "ModelA"), 
+> beb <- getBEB(dir_path = "/path/to/codeml/output",
+                models = c("M2a", "ModelA"),
                 sig = 0.05,
                 cores = 4,
                 ext = ".out")
@@ -247,8 +249,8 @@ $list$ModelA
 
 $nested
 # A tibble: 3 x 2
-  model  BEB              
-  <chr>  <list>           
+  model  BEB
+  <chr>  <list>
 1 M2a    <tibble [1 × 11]>
 2 M8     <tibble [1 × 11]>
 3 ModelA <tibble [3 × 11]>
@@ -263,7 +265,7 @@ This is an accessory function for downstream analysis. Once you've got the long-
 The function is a simple one. It only needs the long-format dataframe from the `getBEB()` function, a logical specifying if you want to extract significant sites only and optionally a frequency threshold to filter sites on.
 
 ```
-> getFreq(df_beb = beb$list$M2a, 
+> getFreq(df_beb = beb$list$M2a,
            only_signif = FLASE)
 ```
 
@@ -314,8 +316,8 @@ This is a parsing function to get the branch `dN/dS` values from the `CODEML` ou
 Simply pass the file path to the `CODEML` output directory. I've hard coded which evolutionary models have branch `dN/dS` values into the code. Then, pass a vector of models you want to get `dN/dS` values for.
 
 ```
-> getBranchDNDS(directory_path = "/path/to/codeml_out", 
-                models = c("M1a", "ModelA", "TwoRatio"), 
+> getBranchDNDS(directory_path = "/path/to/codeml_out",
+                models = c("M1a", "ModelA", "TwoRatio"),
                 ext = ".out")
 ```
 
@@ -344,8 +346,8 @@ $list
   4 4..3   0      486.  279.       0     0 0           0      0
 $dataframe
   # A tibble: 9,333 x 4
-   model gene                 tree             branch          
-   <chr> <chr>                <chr>            <list>          
+   model gene                 tree             branch
+   <chr> <chr>                <chr>            <list>
    1 M8    1433E-YWHAE-YWHAE    brownForeground  <tibble [4 × 9]>
    2 M8    1433E-YWHAE-YWHAE    laevisForeground <tibble [4 × 9]>
    3 M8    1433E-YWHAE-YWHAE    tigerForeground  <tibble [4 × 9]>
@@ -368,8 +370,8 @@ This function parses the `dN/dS` values for site classes. Not every model provid
 Input for this function is simply the directory path to where the `CODEML` output directory is, a vector of models and the extension of the output files (defaults to `.out`).
 
 ```
-getPW(dir_path = "path/to/codeml_out", 
-      models = c("ModelA", "M1a", "M8"), 
+getPW(dir_path = "path/to/codeml_out",
+      models = c("ModelA", "M1a", "M8"),
       ext = ".custom.out")
 
 ```
@@ -384,7 +386,7 @@ The second list object is a list of nested dataframes under the index identifier
 $long_list
   $long_list$M2a_Rel
   # A tibble: 18 x 6
-     model   gene              tree             var   K1      K2     
+     model   gene              tree             var   K1      K2
      <chr>   <chr>             <chr>            <chr> <chr>   <chr>  
    1 M2a_Rel 1433E-YWHAE-YWHAE brownForeground  p     0.99717 0.00000
    2 M2a_Rel 1433E-YWHAE-YWHAE brownForeground  w     0.00000 1.00000
@@ -396,21 +398,21 @@ $long_list
   
   $long_list$M8
   # A tibble: 18 x 15
-     model gene              tree             var   K1      K2      K3      K4      K5      K6      K7      K8      K9      K10     K11     
-     <chr> <chr>             <chr>            <chr> <chr>   <chr>   <chr>   <chr>   <chr>   <chr>   <chr>   <chr>   <chr>   <chr>   <chr>   
-   1 M8    1433E-YWHAE-YWHAE brownForeground  p     0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.00001 
-   2 M8    1433E-YWHAE-YWHAE brownForeground  w     0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 1.00000 
-   3 M8    1433E-YWHAE-YWHAE laevisForeground p     0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.00001 
-   4 M8    1433E-YWHAE-YWHAE laevisForeground w     0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 1.00000 
-   5 M8    1433E-YWHAE-YWHAE tigerForeground  p     0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.00001 
-   6 M8    1433E-YWHAE-YWHAE tigerForeground  w     0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 1.00000 
+     model gene              tree             var   K1      K2      K3      K4      K5      K6      K7      K8      K9      K10     K11
+     <chr> <chr>             <chr>            <chr> <chr>   <chr>   <chr>   <chr>   <chr>   <chr>   <chr>   <chr>   <chr>   <chr>   <chr>
+   1 M8    1433E-YWHAE-YWHAE brownForeground  p     0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.00001
+   2 M8    1433E-YWHAE-YWHAE brownForeground  w     0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 1.00000
+   3 M8    1433E-YWHAE-YWHAE laevisForeground p     0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.00001
+   4 M8    1433E-YWHAE-YWHAE laevisForeground w     0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 1.00000
+   5 M8    1433E-YWHAE-YWHAE tigerForeground  p     0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.10000 0.00001
+   6 M8    1433E-YWHAE-YWHAE tigerForeground  w     0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 1.00000
    ...
 
 $nested_list
   $nested_list$M2a_Rel
   # A tibble: 9 x 4
-    model   gene              tree             data            
-    <chr>   <chr>             <chr>            <list>          
+    model   gene              tree             data
+    <chr>   <chr>             <chr>            <list>
   1 M2a_Rel 1433E-YWHAE-YWHAE brownForeground  <tibble [2 × 3]>
   2 M2a_Rel 1433E-YWHAE-YWHAE laevisForeground <tibble [2 × 3]>
   3 M2a_Rel 1433E-YWHAE-YWHAE tigerForeground  <tibble [2 × 3]>
@@ -418,93 +420,14 @@ $nested_list
   
   $nested_list$M8
   # A tibble: 9 x 4
-    model gene              tree             data             
-    <chr> <chr>             <chr>            <list>           
+    model gene              tree             data
+    <chr> <chr>             <chr>            <list>
   1 M8    1433E-YWHAE-YWHAE brownForeground  <tibble [2 × 12]>
   2 M8    1433E-YWHAE-YWHAE laevisForeground <tibble [2 × 12]>
   3 M8    1433E-YWHAE-YWHAE tigerForeground  <tibble [2 × 12]>
   ...
 ```
 
-## Function: goFisher()
-
-This is a function I've written that conducts a fishers test on a GO term for a group of genes, identifying if a specific GO term is enriched in the set or not. **This function is very much custom to this analysis pipeline!** The inputs are built in a specific way, meaning if you can replicate the inputs, you're good to go. Otherwise, it may be easier to use another GO analysis tool.
-
-**Usage**
-
-The function takes three inputs, two of which you will need to build yourself. 
-
-The first is a mapping of the gene to go term. Below is an example of what the table should look like, where the first column is the gene identifier and the second is the go term(s) associated to that gene.
-
-```
-# A tibble: 7,620 x 2
-   gene                      GO_ID     
-   <chr>                     <chr>     
- 1 1433E-YWHAE-YWHAE         GO:0019904
- 2 1433T-YWHAQ-YWHAQ         GO:0019904
- 3 1433Z-YWHAZ-YWHAZ         GO:0019904
- 4 2A5D-PPP2R5D-PPP2R5D      GO:0000159
- 5 2A5D-PPP2R5D-PPP2R5D      GO:0007165
- 6 2A5D-PPP2R5D-PPP2R5D      GO:0019888
- 7 2AAA-PPP2R1A-PPP2R1A      GO:0019888
- 8 2AAA-PPP2R1A-PPP2R1A      GO:0065003
- 9 2AAA-PPP2R1A-PPP2R1A      GO:0005515
-10 2ABA-PPP2R2A-LOC113445617 GO:0000159
-# … with 7,610 more rows
-```
-
-In the example above, the `gene` column is self explanatory, the `n_GOIDs` represents what number GO id it is for a gene, while `GO_ID` is the GO term. In the example, gene `2A5D-PPP2R5D-PPP2R5D` has 3 different go terms assocaited with it.
-
-The second input is a long-format dataframe listing the genes that have at least one site under selection and which "group" they belong to. In this case, the group is the model and tree combination that the gene appeared in. So long as you've got some grouping variable for your data, you should be good to go. Below is an example:
-
-```
-# A tibble: 13,907 x 2
-   gene                            cluster               
-   <chr>                           <chr>                 
- 1 1433T-YWHAQ-YWHAQ               M2a-brownForeground-80
- 2 2A5D-PPP2R5D-PPP2R5D            M2a-brownForeground-80
- 3 5NTC-NT5C2-NT5C2                M2a-brownForeground-80
- 4 A4GCT-A4GNT-A4GNT               M2a-brownForeground-80
- 5 AAPK2-PRKAA2-PRKAA2             M2a-brownForeground-80
- 6 AASD1-LOC113425478-LOC113449799 M2a-brownForeground-80
- 7 AATC-GOT1-GOT1                  M2a-brownForeground-80
- 8 ABD18-ABHD18-ABHD18             M2a-brownForeground-80
- 9 ACADM-ACADM-ACADM               M2a-brownForeground-80
-10 ACDSB-ACADSB-ACADSB             M2a-brownForeground-80
-# … with 13,897 more rows
-```
-
-The last input is the statistical correction you want to apply. I've simply used the base package `p.adjust` function to do this, so choose any of the valid parameters for that function.
-
-The function is then executed like so:
-
-```
-> out <- goFisher(gene_GOID_mapping = g2g, 
-                  gene_cluster_mapping = gws, 
-                  pAdj_method = "bonferroni")
-```
-
-**Output**
-
-The output is a dataframe shown below. The statistics associated with a GO term belonging to a specific cluster (condition) is reported. The raw p-value and adjusted p-values are given, along with the confidence intervals and odds-ratio for the Fisher's exact test. The values used in the 2x2 contingency table are stored in the `data` column, while the Fisher statistic is stored in the column titled `fisher`.
-
-```
-# A tibble: 10,360 x 9
-   cluster                GO_ID         pVal  adjP conf_low conf_high      OR data             fisher 
-   <chr>                  <chr>        <dbl> <dbl>    <dbl>     <dbl>   <dbl> <list>           <list> 
- 1 M2a-brownForeground-80 GO:0045087 0.00210 0.970  2.29      1135.    23.2   <tibble [1 × 4]> <htest>
- 2 M2a-brownForeground-80 GO:0000015 0.148   1      0.147      Inf    Inf     <tibble [1 × 4]> <htest>
- 3 M2a-brownForeground-80 GO:0000077 0.161   1      0.320       33.6    3.84  <tibble [1 × 4]> <htest>
- 4 M2a-brownForeground-80 GO:0000079 0.274   1      0.0732     451.     5.76  <tibble [1 × 4]> <htest>
- 5 M2a-brownForeground-80 GO:0000122 0.0592  1      0.599      678.    11.5   <tibble [1 × 4]> <htest>
- 6 M2a-brownForeground-80 GO:0000124 0.148   1      0.147      Inf    Inf     <tibble [1 × 4]> <htest>
- 7 M2a-brownForeground-80 GO:0000127 0.148   1      0.147      Inf    Inf     <tibble [1 × 4]> <htest>
- 8 M2a-brownForeground-80 GO:0000139 1       1      0.0243      10.3    1.15  <tibble [1 × 4]> <htest>
- 9 M2a-brownForeground-80 GO:0000159 0.274   1      0.0732     451.     5.76  <tibble [1 × 4]> <htest>
-10 M2a-brownForeground-80 GO:0000166 0.501   1      0.00805      2.16   0.337 <tibble [1 × 4]> <htest>
-# … with 10,350 more rows
-```
-
-## Author 
+## Author
 
 - **Alastair Ludington**: alastair.ludington@adelaide.edu.au
